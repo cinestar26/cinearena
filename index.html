@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+ <link rel="icon" type="fav" href="https://cinearena.xo.je/images/cinefav.png">
+  <title>CireArena</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+
+    :root {
+
+      --primary: #00ffff;
+
+      --secondary: #ff00ff;
+
+      --dark: #0d0f15;
+
+      --darker: #090b0f;
+
+      --card-bg: #1c1f26;
+
+      --footer-bg: #10121a;
+
+    }
+
+    * {
+
+      margin: 0;
+
+      padding: 0;
+
+      box-sizing: border-box;
+
+    }
+
+    html {
+
+      height: 100%;
+
+    }
+
+    body {
+
+      font-family: 'Poppins', sans-serif;
+
+      background-color: var(--dark);
+
+      min-height: 100vh;
+
+      display: flex;
+
+      flex-direction: column;
+
+      position: relative;
+
+      overflow-x: hidden;
+
+    }
+
+    #particles-js {
+
+      position: fixed;
+
+      width: 100%;
+
+      height: 100%;
+
+      top: 0;
+
+      left: 0;
+
+      z-index: -1;
+
+    }
+
+    .content-wrapper {
+
+      flex: 1;
+
+      width: 100%;
+
+      padding-bottom: 40px; /* Space for footer */
+
+    }
+
+    .header-container {
+
+      position: relative;
+
+      padding: 2rem 0;
+
+      overflow: hidden;
+
+      width: 100%;
+
+    }
+
+    h1 {
+
+      text-align: center;
+
+      font-size: 2.8rem;
+
+      margin: 0 auto;
+
+      background: linear-gradient(90deg, #ff4d4d, #00fff7, #ff00c8, #00ff8c);
+
+      background-size: 300% 300%;
+
+      -webkit-background-clip: text;
+
+      -webkit-text-fill-color: transparent;
+
+      animation: rgbMove 5s linear infinite;
+
+      position: relative;
+
+      display: inline-block;
+
+      padding: 0 20px;
+
+      width: 100%;
+
+    }
+
+    h1::before, h1::after {
+
+      content: '';
+
+      position: absolute;
+
+      top: 50%;
+
+      width: 50vw;
+
+      height: 3px;
+
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5));
+
+      transform: translateY(-50%);
+
+    }
+
+    h1::before {
+
+      right: 100%;
+
+      background: linear-gradient(90deg, rgba(0, 255, 255, 0.5), transparent);
+
+    }
+
+    h1::after {
+
+      left: 100%;
+
+    }
+
+    @keyframes rgbMove {
+
+      0% { background-position: 0% 50%; }
+
+      50% { background-position: 100% 50%; }
+
+      100% { background-position: 0% 50%; }
+
+    }
+
+    .header-icon {
+
+      font-size: 2.5rem;
+
+      margin-right: 15px;
+
+      color: var(--primary);
+
+      vertical-align: middle;
+
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+
+    }
+
+    .channel-grid {
+
+      display: flex;
+
+      justify-content: center;
+
+      flex-wrap: wrap;
+
+      gap: 20px;
+
+      padding: 20px;
+
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      width: 100%;
+
+    }
+
+    .channel-card {
+
+      background-color: var(--card-bg);
+
+      border-radius: 16px;
+
+      padding: 15px 15px 10px;
+
+      width: 180px;
+
+      text-align: center;
+
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      height: 240px;
+
+      opacity: 0;
+
+      transform: translateY(40px);
+
+      animation: fadeInUp 0.8s forwards;
+
+      position: relative;
+
+      overflow: hidden;
+
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      text-decoration: none;
+
+    }
+
+    @keyframes fadeInUp {
+
+      from {
+
+        opacity: 0;
+
+        transform: translateY(40px);
+
+      }
+
+      to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+      }
+
+    }
+
+    .channel-card img {
+
+      width: 110px;
+
+      height: 110px;
+
+      object-fit: contain;
+
+      margin-bottom: 8px;
+
+      filter: drop-shadow(0 0 8px var(--primary)) brightness(1.2) contrast(1.2);
+
+      transition: all 0.3s ease;
+
+    }
+
+    .channel-card:hover img {
+
+      transform: scale(1.1);
+
+      filter: drop-shadow(0 0 12px var(--secondary)) brightness(1.3) contrast(1.3);
+
+    }
+
+    .channel-card h3 {
+
+      font-size: 16px;
+
+      color: #fff;
+
+      font-weight: 600;
+
+      margin: 8px 0;
+
+      position: relative;
+
+      display: -webkit-box;
+
+      -webkit-line-clamp: 2;
+
+      -webkit-box-orient: vertical;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+      min-height: 40px;
+
+      line-height: 1.3;
+
+      width: 100%;
+
+    }
+
+    .explore-btn {
+
+      margin-top: auto;
+
+      margin-bottom: 5px;
+
+      padding: 10px 20px;
+
+      background: linear-gradient(45deg, #2c2f35, #3a3d45);
+
+      color: #fff;
+
+      border: none;
+
+      border-radius: 50px;
+
+      cursor: pointer;
+
+      transition: all 0.3s ease;
+
+      font-size: 15px;
+
+      font-weight: 600;
+
+      letter-spacing: 0.5px;
+
+      position: relative;
+
+      overflow: hidden;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+      width: 90%;
+
+    }
+
+    .explore-btn:hover {
+
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+
+      color: #000;
+
+      box-shadow: 0 0 15px var(--primary);
+
+      transform: translateY(-2px);
+
+    }
+
+    footer {
+
+      background-color: var(--footer-bg);
+
+      text-align: center;
+
+      padding: 30px 20px;
+
+      width: 100%;
+
+      position: relative;
+
+      margin-top: auto;
+
+    }
+
+    footer::before {
+
+      content: '';
+
+      position: absolute;
+
+      top: 0;
+
+      left: 0;
+
+      width: 100%;
+
+      height: 2px;
+
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+
+    }
+
+    .social-icons {
+
+      display: flex;
+
+      justify-content: center;
+
+      gap: 20px;
+
+      margin-bottom: 25px;
+
+    }
+
+    .social-icon {
+
+      width: 45px;
+
+      height: 45px;
+
+      border-radius: 50%;
+
+      background: linear-gradient(45deg, var(--card-bg), #2a2d35);
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: #fff;
+
+      font-size: 20px;
+
+      transition: all 0.3s ease;
+
+      position: relative;
+
+      overflow: hidden;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    }
+
+    .social-icon:hover {
+
+      transform: translateY(-4px) scale(1.1);
+
+      box-shadow: 0 8px 16px rgba(0, 255, 255, 0.3);
+
+    }
+
+    .social-icon.telegram { background: linear-gradient(45deg, #0088cc, #00aced); }
+
+    .social-icon.youtube { background: linear-gradient(45deg, #ff0000, #e52d27); }
+
+    .social-icon.whatsapp { background: linear-gradient(45deg, #25D366, #128C7E); }
+
+    .social-icon.facebook { background: linear-gradient(45deg, #3b5998, #4267B2); }
+
+    .footer-text {
+
+      margin-top: 20px;
+
+      color: #aaa;
+
+      font-size: 13px;
+
+      position: relative;
+
+    }
+
+    .footer-text::before {
+
+      content: '';
+
+      position: absolute;
+
+      top: -12px;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      width: 80px;
+
+      height: 1px;
+
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+
+    }
+
+    /* Responsive adjustments */
+
+    @media (max-width: 768px) {
+
+      h1 {
+
+        font-size: 2rem;
+
+        padding: 0 15px;
+
+      }
+
+      
+
+      .channel-grid {
+
+        padding: 15px;
+
+        gap: 15px;
+
+      }
+
+      
+
+      .channel-card {
+
+        width: calc(50% - 15px);
+
+        height: 220px;
+
+      }
+
+      
+
+      .channel-card img {
+
+        width: 80px;
+
+        height: 80px;
+
+      }
+
+      
+
+      .social-icons {
+
+        gap: 15px;
+
+      }
+
+      
+
+      .social-icon {
+
+        width: 40px;
+
+        height: 40px;
+
+        font-size: 18px;
+
+      }
+
+    }
+
+    @media (max-width: 480px) {
+
+      h1 {
+
+        font-size: 1.8rem;
+
+      }
+
+      
+
+      .header-icon {
+
+        font-size: 2rem;
+
+      }
+
+      
+
+      .channel-card {
+
+        width: calc(50% - 10px);
+
+        height: 200px;
+
+      }
+
+      
+
+      .channel-card img {
+
+        width: 70px;
+
+        height: 70px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="particles-js"></div>
+
+  
+
+  <div class="content-wrapper">
+
+    <div class="header-container">
+
+      <h1><i class="fas fa-satellite-dish header-icon"></i> CineArena.Site</h1>
+
+    </div>
+
+    
+
+    <div class="channel-grid">
+
+      <a href="https://cinelive.pages.dev/ipl2/" class="channel-card" target="_blank">
+
+        <img src="https://pbs.twimg.com/media/G5I9Ax7bAAAof2e.jpg" alt="IPL">
+
+        <h3>IPL Live</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+
+      
+ <a href="https://psl.mumtajhusainbr.workers.dev/" class="channel-card" target="_blank">
+
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGiUwm3EbRYCNpJbamxW0K7Px5wod1tzuLdQ&s" alt="PSL">
+
+        <h3>PSL Live</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+      
+<a href="https://cinefancode.pages.dev/" class="channel-card" target="_blank">
+
+        <img src="https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png" alt="Fancode">
+
+        <h3>Fancode (All Matches)</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+
+      <a href="https://cinearena-site.vercel.app/sonyten" class="channel-card" target="_blank">
+
+        <img src="https://upload.wikimedia.org/wikipedia/en/c/cd/Sony_Sports_Network.svg" alt="Sony">
+
+        <h3>Sony Ten</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+     
+
+<!--
+      <a href="https://cinearena.pages.dev/star/" class="channel-card" target="_blank">
+
+        <img src="https://yt3.googleusercontent.com/OPYopxxHR_WLnpmLpl7lIcYTw-D_WkbCb1Hy7-8i95lh9e4Fss_siVHhKE2LMb5cN834fuv_Ew=s900-c-k-c0x00ffffff-no-rj" alt="star sports">
+
+        <h3>Star Sports</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+      -->
+
+      <a href="https://cinearena-site.vercel.app/tnt" class="channel-card" target="_blank">
+
+        <img src="https://yt3.googleusercontent.com/LsMejcvY6MC4kH5HASIlE5UEEmdszstpFHV8-8x9Hv1dzypYD2gvYKnyDxvUSA5xRnHwGtMRwg=s900-c-k-c0x00ffffff-no-rj" alt="Fancode">
+
+        <h3>TNT Sports (All Channels)</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+      <a href="https://cinefancodeww.pages.dev/" class="channel-card" target="_blank">
+
+        <img src="https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png" alt="Fancode">
+
+        <h3>Fancode (Worldwide)</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+        
+     <a href="https://cinezee5.pages.dev/" class="channel-card" target="_blank">
+
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Zee5-official-logo.jpeg" alt="Zee5">
+
+        <h3>Zee5 Channels</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+
+
+      
+
+
+<!--
+      <a href="https://cinearena-site.vercel.app/" class="channel-card" target="_blank">
+
+        <img src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/sports-channels-logo-design-template-3e19f960fc642c7fda35ffb2db8f758c_screen.jpg?ts=1685770717" alt="Sports">
+
+        <h3>Sports Channel</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+-->
+
+      <a href="https://cinemusic.pages.dev" class="channel-card" target="_blank">
+
+        <img src="https://img.freepik.com/premium-vector/note-music-logo-design_93835-645.jpg?semt=ais_hybrid&w=740&q=80" alt="Music">
+
+        <h3>Music</h3>
+
+        <button class="explore-btn">Explore</button>
+
+      </a>
+        
+
+    </div>
+
+  </div>
+
+  
+    <center>
+   
+</center>
+    
+
+  <footer>
+
+    <div class="social-icons">
+
+      <a href="https://t.me/cine_arena" target="_blank" class="social-icon telegram">
+
+        <i class="fab fa-telegram"></i>
+
+      </a>
+
+      
+
+      <a href="#" target="_blank" class="social-icon whatsapp">
+
+        <i class="fab fa-whatsapp"></i>
+
+      </a>
+
+      
+
+    </div>
+
+    <div class="footer-text">
+
+      © 2026 cinearena.site. All rights reserved.
+
+    </div>
+
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <script>
+
+    particlesJS("particles-js", {
+
+      "particles": {
+
+        "number": {
+
+          "value": 80,
+
+          "density": {
+
+            "enable": true,
+
+            "value_area": 800
+
+          }
+
+        },
+
+        "color": {
+
+          "value": ["#00ffff", "#ff00ff", "#00ff00", "#ffffff"]
+
+        },
+
+        "shape": {
+
+          "type": "circle",
+
+          "stroke": {
+
+            "width": 0,
+
+            "color": "#000000"
+
+          }
+
+        },
+
+        "opacity": {
+
+          "value": 0.5,
+
+          "random": true,
+
+          "anim": {
+
+            "enable": true,
+
+            "speed": 1,
+
+            "opacity_min": 0.1,
+
+            "sync": false
+
+          }
+
+        },
+
+        "size": {
+
+          "value": 3,
+
+          "random": true,
+
+          "anim": {
+
+            "enable": true,
+
+            "speed": 2,
+
+            "size_min": 0.1,
+
+            "sync": false
+
+          }
+
+        },
+
+        "line_linked": {
+
+          "enable": true,
+
+          "distance": 150,
+
+          "color": "#00ffff",
+
+          "opacity": 0.2,
+
+          "width": 1
+
+        },
+
+        "move": {
+
+          "enable": true,
+
+          "speed": 1,
+
+          "direction": "none",
+
+          "random": true,
+
+          "straight": false,
+
+          "out_mode": "out",
+
+          "bounce": false,
+
+          "attract": {
+
+            "enable": true,
+
+            "rotateX": 600,
+
+            "rotateY": 1200
+
+          }
+
+        }
+
+      },
+
+      "interactivity": {
+
+        "detect_on": "canvas",
+
+        "events": {
+
+          "onhover": {
+
+            "enable": true,
+
+            "mode": "grab"
+
+          },
+
+          "onclick": {
+
+            "enable": true,
+
+            "mode": "push"
+
+          },
+
+          "resize": true
+
+        },
+
+        "modes": {
+
+          "grab": {
+
+            "distance": 140,
+
+            "line_linked": {
+
+              "opacity": 0.5
+
+            }
+
+          },
+
+          "push": {
+
+            "particles_nb": 3
+
+          }
+
+        }
+
+      },
+
+      "retina_detect": true
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      const cards = document.querySelectorAll('.channel-card');
+
+      cards.forEach((card, index) => {
+
+        card.style.animationDelay = `${index * 0.1}s`;
+
+      });
+
+    });
+
+  </script>
+
+</body>
+
+  </html>
