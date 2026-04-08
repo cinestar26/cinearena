@@ -1,540 +1,577 @@
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>CineArena</title>
-        <link rel="dns-prefetch" href="https://cdncss.jdi5.com">
-        <link rel="stylesheet" type="text/css" href="https://cdncss.jdi5.com/style/187263/style.css"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-        <link rel="shortcut icon" href="">
-        <link rel="icon" href="">
-        <link rel="shortcut icon" type="image/x-icon" href="">
-    </head>
-    <body>
-        <style>
-            .active {
-                background: red
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CineArena - Download Sports</title>
+    <style>
+        :root {
+            --telegram: #0088cc;
+            --neon-blue: #00f2fe;
+            --neon-pink: #fe006f;
+            --glass-bg: rgba(15, 20, 35, 0.7);
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
 
-            .fix {
-                visibility: hidden
-            }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-            .fixed {
-                top: 0px;
-                background: gold;
-                position: fixed
-            }
+        body {
+            background-color: #050810;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px 5px 5px 5px;
+            position: relative;
+        }
 
-            .tab-pane {
-                overflow: hidden;
-                border: 1px solid #fff;
-                background-color: #f1f1f1;
-                align: center;
-                vertical-align: middle;
-                vertical-align: middle;
-                align: center;
-                align-items: center;
-                vertical-align: middle;
-                horizontal-align: middle;
-            }
+        .bg-orb-1, .bg-orb-2 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat 10s infinite alternate ease-in-out;
+        }
 
-            .tab-content {
-                background: SeaShell;
-                float: left;
-                border: none;
-                outline: none;
-                cursor: pointer;
-                padding-top: 15px;
-                padding-left: 4px;
-                padding-right: 4px;
-                padding-bottom: 44px;
-                transition: 0.3s;
-                font-size: 16px;
-                align: center;
-                vertical-align: middle;
-                vertical-align: middle;
-                align: center;
-                align-items: center;
-                vertical-align: middle;
-                horizontal-align: middle;
-                width: 100%
-            }
+        .bg-orb-1 {
+            width: 250px;
+            height: 250px;
+            background: rgba(0, 242, 254, 0.2);
+            top: 5%;
+            left: 5%;
+        }
 
-            .telegram-btn {
-                position: fixed;
-                background-color: gold;
-                padding: 2px 2px;
-                text-decoration: none;
-                transition: all 0.2s ease;
-                align-items: center;
-                justify-content: center;
-                gap: 15px;
-                white-space: nowrap;
-                width: 100%;
-                flex-shrink: 0;
-            }
+        .bg-orb-2 {
+            width: 200px;
+            height: 200px;
+            background: rgba(254, 0, 111, 0.15);
+            bottom: 5%;
+            right: 5%;
+            animation-delay: -5s;
+        }
 
-            .telegram-btn1 {
-                background-color: red;
-                color: gold;
-                padding: 2px 2px;
-                border-radius: 0px;
-                text-decoration: none;
-                font-weight: 900;
-                transition: all 0.2s ease;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.1); }
+        }
 
-            .telegram-btn2 {
-                background-color: green;
-                color: red;
-                padding: 2px 2px;
-                border-radius: 0px;
-                text-decoration: none;
-                font-weight: 900;
-                transition: all 0.2s ease;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-        </style>
-        
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-                <title>CineArena</title>
-                <style>
-                    :root {
-                        --telegram: #0088cc;
-                        --neon-blue: #00f2fe;
-                        --neon-pink: #fe006f;
-                        --glass-bg: rgba(15, 20, 35, 0.7);
-                        --text-main: #ffffff;
-                        --text-muted: #8b9bb4;
-                    }
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            text-align: center;
+            padding-bottom: 10px;
+            position: relative;
+            z-index: 10;
+        }
 
-                    * {
-                        box-sizing: border-box;
-                        margin: 0;
-                        padding: 0;
-                        font-family: -apple-system______________________________, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-                    }
+        .header {
+            padding: 15px 15px 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-                    body {
-                        background-color: #050810;
-                        color: var(--text-main);
-                        height: 100vh;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: flex-start;
-                        padding: 10px 5px 5px 5px;
-                        /* Reduced top padding */
-                        overflow: hidden;
-                        position: relative;
-                    }
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(to right, #ffffff, #a0c3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-                    /* Moving Neon Background Orbs */
-                    .bg-orb-1, .bg-orb-2 {
-                        position: absolute;
-                        border-radius: 50%;
-                        filter: blur(80px);
-                        a-index 0; animation: orbFloat 10s infinite alternate ease-in-out;
-                    }
+        .logo span {
+            -webkit-text-fill-color: #ffcc00;
+        }
 
-                    .bg-orb-1 {
-                        width: 250px;
-                        height: 250px;
-                        background: rgba(0, 242, 254, 0.2);
-                        top: 5%;
-                        left: 5%;
-                    }
+        .content-area {
+            padding: 20px 15px;
+        }
 
-                    .bg-orb-2 {
-                        width: 200px;
-                        height: 200px;
-                        background: rgba(254, 0, 111, 0.15);
-                        bottom: 5%;
-                        right: 5%;
-                        animation-delay: -5s;
-                    }
+        .notice-box {
+            background: linear-gradient(90deg, rgba(0, 136, 204, 0.1), rgba(0, 242, 254, 0.1));
+            color: #00f2fe;
+            padding: 6px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            font-weight: 700;
+        }
 
-                    @keyframes orbFloat {
-                        0% {
-                            transform: translate(0, 0) scale(1);
-                        }
+        /* DOWNLOAD NOW SECTION - NEW */
+        .download-section {
+            margin: 15px 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 16px;
+            padding: 12px;
+            position: relative;
+            border: 1px solid #ffcc00;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+        }
 
-                        100% {
-                            transform: translate(30px, 30px) scale(1.1);
-                        }
-                    }
+        .download-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
 
-                    /* Ultra-Premium Compact Glass Container */
-                    .container {
-                        background: var(--glass-bg);
-                        backdrop-filter: blur(20px);
-                        -webkit-backdrop-filter: blur(20px);
-                        border: 1px solid rgba(255, 255, 255, 0.08);
-                        border-top: 1px solid rgba(255, 255, 255, 0.2);
-                        width: 100%;
-                        max-width: 400px;
-                        border-radius: 20px;
-                        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-                        text-align: center;
-                        padding-bottom: 10px;
-                        /* Reduced bottom padding */
-                        position: relative;
-                        a-index 10; }
+        .download-header h3 {
+            color: #ffcc00;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-                    /* Header - Subtitle Removed & Padding Reduced */ .header {
-                        padding: 15px 15px 5px;
-                        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-                    }
+        .close-downloads {
+            background: rgba(255, 0, 51, 0.8);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-                    .logo {
-                        font-size: 28px;
-                        font-weight: 900;
-                        margin-bottom: 0px;
-                        /* Removed margin */
-                        background: linear-gradient(to right, #ffffff, #a0c3ff);
-                        -webkit-background-clip: text;
-                        -webkit-text-fill-color: transparent;
-                    }
+        .close-downloads:hover {
+            background: #ff0033;
+            transform: scale(1.05);
+        }
 
-                    .logo span {
-                        -webkit-text-fill-color: #ffcc00;
-                    }
+        .download-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-                    /* Content Area - Tighter Spacing */
-                    .content-area {
-                        padding: 20px 15px;
-                    }
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #0f0f23, #1a1a3e);
+            border: 1px solid rgba(255, 204, 0, 0.3);
+            border-radius: 12px;
+            padding: 10px 12px;
+            text-decoration: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
 
-                    .notice-box {
-                        background: linear-gradient(90deg, rgba(0, 136, 204, 0.1), rgba(0, 242, 254, 0.1));
-                        color: #00f2fe;
-                        padding: 6px;
-                        border-radius: 8px;
-                        font-size: 11px;
-                        margin-bottom: 10px;
-                        /* Reduced gap */
-                        border: 1px solid rgba(0, 242, 254, 0.2);
-                        font-weight: 700;
-                    }
+        .download-btn:hover {
+            border-color: #ffcc00;
+            transform: translateX(5px);
+            background: linear-gradient(90deg, #1a1a3e, #252550);
+        }
 
-                    /* --- 3D MATCH BANNER --- */
-                    .premium-banner-container {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        width: 100%;
-                        height: 145px;
-                        /* Slightly reduced height to save space */
-                        border-radius: 12px;
-                        overflow: hidden;
-                        text-decoration: none;
-                        position: relative;
-                        background: #0a1118;
-                        margin-bottom: 10px;
-                        /* Reduced gap */
-                        border: 1px solid rgba(255, 255, 255, 0.1);
-                        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-                    }
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-                    .premium-bg-image {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        height: 100%;
-                        width: 100%;
-                        background-image: url('/iplposter.jpg');
-                        background-size: cover;
-                        background-position: center 20%;
-                        -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-                        mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-                        opacity: 0.8;
-                    }
+        .download-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ffcc00, #ff8800);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
 
-                    .live-badge {
-                        position: absolute;
-                        top: 6px;
-                        right: 6px;
-                        background: rgba(0,0,0,0.7);
-                        color: white;
-                        padding: 3px 6px;
-                        border-radius: 10px;
-                        font-size: 8px;
-                        font-weight: 900;
-                        display: flex;
-                        align-items: center;
-                        gap: 4px;
-                        border: 1px solid rgba(255,255,255,0.1);
-                        a-index 5; }
+        .download-text {
+            text-align: left;
+        }
 
-                    .live-dot {
-                        width: 5px;
-                        height: 5px;
-                        background: #ff0033;
-                        border-radius: 50%;
-                        animation: pulseRed 1s infinite alternate;
-                    }
+        .download-title {
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+        }
 
-                    @keyframes pulseRed {
-                        0% {
-                            box-shadow: 0 0 3px #ff0033;
-                        }
+        .download-size {
+            color: #ffcc00;
+            font-size: 9px;
+            font-weight: 600;
+        }
 
-                        100% {
-                            box-shadow: 0 0 8px #ff0033;
-                        }
-                    }
+        .download-action {
+            background: linear-gradient(135deg, #ffcc00, #ff8800);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
 
-                    .premium-content {
-                        position: relative;
-                        a-index 2; text-align: center;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 4px;
-                        margin-top: 10px;
-                    }
+        .premium-banner-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 145px;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            position: relative;
+            background: #0a1118;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+        }
 
-                    .premium-title {
-                        color: #ffcc00;
-                        font-size: 10px;
-                        font-weight: 900;
-                        letter-spacing: 2px;
-                        text-transform: uppercase;
-                    }
+        .premium-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-image: url('https://via.placeholder.com/400x150?text=IPL+2026');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+        }
 
-                    .premium-match {
-                        color: #ffffff;
-                        font-size: 17px;
-                        font-weight: 900;
-                        text-transform: uppercase;
-                        text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
-                    }
+        .live-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 8px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-                    .premium-btn {
-                        background: linear-gradient(90deg, #ff0033, #ff5500);
-                        color: white;
-                        padding: 6px 16px;
-                        border-radius: 50px;
-                        font-size: 11px;
-                        font-weight: 900;
-                        text-transform: uppercase;
-                        box-shadow: 0 3px 10px rgba(255, 0, 51, 0.4);
-                        border: none;
-                        animation: btnPulse 2s infinite;
-                    }
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            background: #ff0033;
+            border-radius: 50%;
+            animation: pulseRed 1s infinite alternate;
+        }
 
-                    @keyframes btnPulse {
-                        0% {
-                            transform: scale(1);
-                        }
+        @keyframes pulseRed {
+            0% { box-shadow: 0 0 3px #ff0033; }
+            100% { box-shadow: 0 0 8px #ff0033; }
+        }
 
-                        50% {
-                            transform: scale(1.05);
-                        }
+        .premium-content {
+            position: relative;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 10px;
+        }
 
-                        100% {
-                            transform: scale(1);
-                        }
-                    }
+        .premium-title {
+            color: #ffcc00;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-                    /* Telegram Buttons - Tighter Spacing */
-                    .tg-btn {
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        background: rgba(255, 255, 255, 0.04);
-                        border: 1px solid rgba(255, 255, 255, 0.05);
-                        padding: 8px 12px;
-                        /* Slimmer buttons */
-                        border-radius: 10px;
-                        text-decoration: none;
-                        color: var(--text-main);
-                        margin-bottom: 6px;
-                        /* Tighter gaps */
-                    }
+        .premium-match {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
+        }
 
-                    .tg-left {
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                    }
+        .premium-btn {
+            background: linear-gradient(90deg, #ff0033, #ff5500);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            box-shadow: 0 3px 10px rgba(255, 0, 51, 0.4);
+            border: none;
+            animation: btnPulse 2s infinite;
+        }
 
-                    .tg-icon {
-                        width: 28px;
-                        height: 28px;
-                        background: linear-gradient(135deg, #0088cc, #00f2fe);
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
+        @keyframes btnPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-                    .tg-icon svg {
-                        width: 14px;
-                        height: 14px;
-                        fill: white;
-                    }
+        .tg-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
 
-                    .tg-name {
-                        font-weight: 700;
-                        font-size: 13px;
-                    }
+        .tg-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-                    .join-badge {
-                        font-size: 10px;
-                        font-weight: 800;
-                        background: rgba(255, 255, 255, 0.1);
-                        color: #fff;
-                        padding: 4px 10px;
-                        border-radius: 12px;
-                    }
+        .tg-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #0088cc, #00f2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-                    /* Divider - Compact */
-                    .divider {
-                        height: 1px;
-                        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                        margin: 10px 0;
-                        /* Reduced gap */
-                        position: relative;
-                    }
+        .tg-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
 
-                    /* Action Buttons - Compact */
-                    .continue-btn {
-                        display: block;
-                        background: linear-gradient(135deg, #00b09b, #96c93d);
-                        color: white;
-                        text-decoration: none;
-                        padding: 12px;
-                        /* Thinner button */
-                        border-radius: 10px;
-                        font-weight: 900;
-                        font-size: 13px;
-                        box-shadow: 0 4px 12px rgba(0, 176, 155, 0.3);
-                        text-transform: uppercase;
-                        margin-bottom: 10px;
-                        /* Reduced gap */
-                        position: relative;
-                        overflow: hidden;
-                        border: 1px solid rgba(255,255,255,0.2);
-                    }
+        .tg-name {
+            font-weight: 700;
+            font-size: 13px;
+        }
 
-                    .continue-btn::before {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 50%;
-                        height: 100%;
-                        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-                        transform: skewX(-25deg);
-                        animation: sweepLight 3s infinite;
-                    }
+        .join-badge {
+            font-size: 10px;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
 
-                    .continue-btn.bottom-btn {
-                        margin-bottom: 0;
-                    }
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            margin: 10px 0;
+        }
 
-                    /* Footer - Compact */
-                    .footer {
-                        margin-top: 10px;
-                        /* Pulled up closer */
-                        margin-bottom: 5px;
-                        color: rgba(255, 255, 255, 0.3);
-                        font-size: 10px;
-                        line-height: 1.5;
-                        text-align: center;
-                        font-weight: 600;
-                        position: relative;
-                        a-index 10; }
-                </style>
-            </head>
-            <body>
-                <div class="bg-orb-1"></div>
-                <div class="bg-orb-2"></div>
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">
-                            CineArena<span>.FUN</span>
+        .continue-btn {
+            display: block;
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-btn.bottom-btn {
+            margin-bottom: 0;
+        }
+
+        .footer {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 10px;
+            line-height: 1.5;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Hidden class for download section */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                CineArena<span>.FUN</span>
+            </div>
+            <br>CineArena      
+        </div>
+        <div class="content-area">
+            <div class="notice-box">🔔 cinearena.fun cinearena-main.pages.dev !</div>
+            
+            <!-- DOWNLOAD NOW SECTION - WITH CLOSE BUTTON -->
+            <div id="downloadSection" class="download-section">
+                <div class="download-header">
+                    <h3>⬇️ DOWNLOAD NOW ⬇️</h3>
+                    <button class="close-downloads" onclick="closeDownloadSection()">✕ CLOSE</button>
+                </div>
+                <div class="download-grid">
+                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match1'); return false;">
+                        <div class="download-info">
+                            <div class="download-icon">🎬</div>
+                            <div class="download-text">
+                                <div class="download-title">IPL 2026 Final HD</div>
+                                <div class="download-size">1080p • 1.2GB</div>
+                            </div>
                         </div>
-                        <br>CineArena      
-                    </div>
-                    <div class="content-area">
-                        <div class="notice-box">🔔 cinearena.fun cinearena-main.pages.dev !            </div>
-                        <a href="https://cinarena-main.pages.dev" class="continue-btn">OPEN CINEARENA MAIN SITE  </a>
-                        <a href="https://cinipl.pages.dev" class="premium-banner-container" target="_blank">
-                            <div class="live-badge">
-                                <div class="live-dot"></div>
-                                LIVE
+                        <div class="download-action">DOWNLOAD</div>
+                    </a>
+                    
+                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match2'); return false;">
+                        <div class="download-info">
+                            <div class="download-icon">⚽</div>
+                            <div class="download-text">
+                                <div class="download-title">UCL Highlights 2026</div>
+                                <div class="download-size">4K • 2.1GB</div>
                             </div>
-                            <div class="premium-bg-image"></div>
-                            <div class="premium-content">
-                                <div>
-                                    <span class="premium-title">IPL 2026 T20</span>
-                                    <br>
-                                    <span class="premium-match">LIVE HINDI</span>
-                                </div>
-                                <div class="premium-btn">WATCH LIVE NOW !!!!!</div>
+                        </div>
+                        <div class="download-action">DOWNLOAD</div>
+                    </a>
+                    
+                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match3'); return false;">
+                        <div class="download-info">
+                            <div class="download-icon">🏏</div>
+                            <div class="download-text">
+                                <div class="download-title">IND vs AUS Full Match</div>
+                                <div class="download-size">720p • 850MB</div>
                             </div>
-                        </a>
-                        <a href="https://t.me/cinearena" target="_blank" class="tg-btn">
-                            <div class="tg-left">
-                                <div class="tg-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                                    </svg>
-                                </div>
-                                <span class="tg-name">CineArena CHANNEL1 </span>
+                        </div>
+                        <div class="download-action">DOWNLOAD</div>
+                    </a>
+                    
+                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match4'); return false;">
+                        <div class="download-info">
+                            <div class="download-icon">🎾</div>
+                            <div class="download-text">
+                                <div class="download-title">Wimbledon 2026 Final</div>
+                                <div class="download-size">1080p • 1.5GB</div>
                             </div>
-                            <span class="join-badge">JOIN</span>
-                        </a>
-                        <a href="https://whatsapp.com/channel/0029VaAYFeN2ZjClWNBlWr18" target="_blank" class="tg-btn">
-                            <div class="tg-left">
-                                <div class="tg-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                                    </svg>
-                                </div>
-                                <span class="tg-name">WHATSAPP CHANNELS </span>
-                            </div>
-                            <span class="join-badge">JOIN</span>
-                        </a>
-                        <a href="https://t.me/cric_stream" target="_blank" class="tg-btn">
-                            <div class="tg-left">
-                                <div class="tg-icon">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                                    </svg>
-                                </div>
-                                <span class="tg-name">Cric_Stream CHANNEL2</span>
-                            </div>
-                            <span class="join-badge">JOIN</span>
-                        </a>
-                        <div class="divider"></div>
-                        <a href="https://cinearena-main.pages.dev" class="continue-btn bottom-btn">CLICK HERE TO ENTER            </a>
-                    </div>
+                        </div>
+                        <div class="download-action">DOWNLOAD</div>
+                    </a>
                 </div>
-                <div class="footer">
-                    &copy;2026 CINEARENA>FUN <br>CINEARENA-MAIN.PAGES.DEV    
+            </div>
+            
+            <a href="https://cinarena-main.pages.dev" class="continue-btn">OPEN CINEARENA MAIN SITE</a>
+            
+            <a href="https://cinipl.pages.dev" class="premium-banner-container" target="_blank">
+                <div class="live-badge">
+                    <div class="live-dot"></div>
+                    LIVE
                 </div>
-            </body>
-        </html>
+                <div class="premium-bg-image"></div>
+                <div class="premium-content">
+                    <div>
+                        <span class="premium-title">IPL 2026 T20</span>
+                        <br>
+                        <span class="premium-match">LIVE HINDI</span>
+                    </div>
+                    <div class="premium-btn">WATCH LIVE NOW !!!!!</div>
+                </div>
+            </a>
+            
+            <a href="https://t.me/cinearena" target="_blank" class="tg-btn">
+                <div class="tg-left">
+                    <div class="tg-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </div>
+                    <span class="tg-name">CineArena CHANNEL1</span>
+                </div>
+                <span class="join-badge">JOIN</span>
+            </a>
+            
+            <a href="https://whatsapp.com/channel/0029VaAYFeN2ZjClWNBlWr18" target="_blank" class="tg-btn">
+                <div class="tg-left">
+                    <div class="tg-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </div>
+                    <span class="tg-name">WHATSAPP CHANNELS</span>
+                </div>
+                <span class="join-badge">JOIN</span>
+            </a>
+            
+            <a href="https://t.me/cric_stream" target="_blank" class="tg-btn">
+                <div class="tg-left">
+                    <div class="tg-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </div>
+                    <span class="tg-name">Cric_Stream CHANNEL2</span>
+                </div>
+                <span class="join-badge">JOIN</span>
+            </a>
+            
+            <div class="divider"></div>
+            
+            <a href="https://cinearena-main.pages.dev" class="continue-btn bottom-btn">CLICK HERE TO ENTER</a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        &copy;2026 CINEARENA>FUN <br>CINEARENA-MAIN.PAGES.DEV    
+    </div>
 
-<!--The script is now using: 522.83 KB of memory.-->
-<!--Peak usage: 623.8 KB of memory.-->
-<!--Loading Time:0.0083990097045898-->
-<!--127.0.0.1-->
+    <script>
+        // Function to close/hide the download section
+        function closeDownloadSection() {
+            const downloadSection = document.getElementById('downloadSection');
+            downloadSection.classList.add('hidden');
+            // Optional: Save preference to localStorage
+            localStorage.setItem('downloadSectionClosed', 'true');
+        }
+
+        // Function to handle redirects for download buttons
+        function redirectToLink(url) {
+            // Show redirect overlay or just redirect
+            window.location.href = url;
+        }
+
+        // Check if download section was previously closed
+        if (localStorage.getItem('downloadSectionClosed') === 'true') {
+            const downloadSection = document.getElementById('downloadSection');
+            if (downloadSection) {
+                downloadSection.classList.add('hidden');
+            }
+        }
+
+        // Optional: Add a "Show Downloads" button if needed (uncomment if you want)
+        // You can add a floating button to show downloads again
+        function showDownloadsAgain() {
+            const downloadSection = document.getElementById('downloadSection');
+            downloadSection.classList.remove('hidden');
+            localStorage.removeItem('downloadSectionClosed');
+        }
+    </script>
+</body>
+</html>
