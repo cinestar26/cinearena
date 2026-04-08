@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CineArena - Download Sports</title>
+    <title>CineArena</title>
     <style>
         :root {
             --telegram: #0088cc;
@@ -106,119 +106,6 @@
             margin-bottom: 10px;
             border: 1px solid rgba(0, 242, 254, 0.2);
             font-weight: 700;
-        }
-
-        /* DOWNLOAD NOW SECTION - NEW */
-        .download-section {
-            margin: 15px 0;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 16px;
-            padding: 12px;
-            position: relative;
-            border: 1px solid #ffcc00;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
-        }
-
-        .download-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .download-header h3 {
-            color: #ffcc00;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .close-downloads {
-            background: rgba(255, 0, 51, 0.8);
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .close-downloads:hover {
-            background: #ff0033;
-            transform: scale(1.05);
-        }
-
-        .download-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .download-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(90deg, #0f0f23, #1a1a3e);
-            border: 1px solid rgba(255, 204, 0, 0.3);
-            border-radius: 12px;
-            padding: 10px 12px;
-            text-decoration: none;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        .download-btn:hover {
-            border-color: #ffcc00;
-            transform: translateX(5px);
-            background: linear-gradient(90deg, #1a1a3e, #252550);
-        }
-
-        .download-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .download-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #ffcc00, #ff8800);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .download-text {
-            text-align: left;
-        }
-
-        .download-title {
-            color: white;
-            font-weight: 800;
-            font-size: 13px;
-        }
-
-        .download-size {
-            color: #ffcc00;
-            font-size: 9px;
-            font-weight: 600;
-        }
-
-        .download-action {
-            background: linear-gradient(135deg, #ffcc00, #ff8800);
-            color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
         }
 
         .premium-banner-container {
@@ -351,6 +238,11 @@
             justify-content: center;
         }
 
+        /* WhatsApp icon specific style */
+        .tg-icon.whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+
         .tg-icon svg {
             width: 14px;
             height: 14px;
@@ -406,7 +298,61 @@
             font-weight: 600;
         }
 
-        /* Hidden class for download section */
+        /* SINGLE DOWNLOAD NOW BUTTON AT BOTTOM */
+        .download-now-footer {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .download-now-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ff0033, #ff5500);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(255, 0, 51, 0.4);
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: btnPulse 2s infinite;
+        }
+
+        .download-now-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #ff2244, #ff7722);
+        }
+
+        /* Close button for download section */
+        .close-download-wrapper {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .close-download {
+            background: rgba(255, 0, 51, 0.7);
+            color: white;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .close-download:hover {
+            background: #ff0033;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -424,59 +370,6 @@
         </div>
         <div class="content-area">
             <div class="notice-box">🔔 cinearena.fun cinearena-main.pages.dev !</div>
-            
-            <!-- DOWNLOAD NOW SECTION - WITH CLOSE BUTTON -->
-            <div id="downloadSection" class="download-section">
-                <div class="download-header">
-                    <h3>⬇️ DOWNLOAD NOW ⬇️</h3>
-                    <button class="close-downloads" onclick="closeDownloadSection()">✕ CLOSE</button>
-                </div>
-                <div class="download-grid">
-                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match1'); return false;">
-                        <div class="download-info">
-                            <div class="download-icon">🎬</div>
-                            <div class="download-text">
-                                <div class="download-title">IPL 2026 Final HD</div>
-                                <div class="download-size">1080p • 1.2GB</div>
-                            </div>
-                        </div>
-                        <div class="download-action">DOWNLOAD</div>
-                    </a>
-                    
-                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match2'); return false;">
-                        <div class="download-info">
-                            <div class="download-icon">⚽</div>
-                            <div class="download-text">
-                                <div class="download-title">UCL Highlights 2026</div>
-                                <div class="download-size">4K • 2.1GB</div>
-                            </div>
-                        </div>
-                        <div class="download-action">DOWNLOAD</div>
-                    </a>
-                    
-                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match3'); return false;">
-                        <div class="download-info">
-                            <div class="download-icon">🏏</div>
-                            <div class="download-text">
-                                <div class="download-title">IND vs AUS Full Match</div>
-                                <div class="download-size">720p • 850MB</div>
-                            </div>
-                        </div>
-                        <div class="download-action">DOWNLOAD</div>
-                    </a>
-                    
-                    <a href="#" class="download-btn" onclick="redirectToLink('https://example.com/download/match4'); return false;">
-                        <div class="download-info">
-                            <div class="download-icon">🎾</div>
-                            <div class="download-text">
-                                <div class="download-title">Wimbledon 2026 Final</div>
-                                <div class="download-size">1080p • 1.5GB</div>
-                            </div>
-                        </div>
-                        <div class="download-action">DOWNLOAD</div>
-                    </a>
-                </div>
-            </div>
             
             <a href="https://cinarena-main.pages.dev" class="continue-btn">OPEN CINEARENA MAIN SITE</a>
             
@@ -508,11 +401,12 @@
                 <span class="join-badge">JOIN</span>
             </a>
             
+            <!-- WHATSAPP CHANNEL - ICON CHANGED TO WHATSAPP -->
             <a href="https://whatsapp.com/channel/0029VaAYFeN2ZjClWNBlWr18" target="_blank" class="tg-btn">
                 <div class="tg-left">
-                    <div class="tg-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    <div class="tg-icon whatsapp">
+                        <svg viewBox="0 0 24 24" fill="white">
+                            <path d="M12.032 2.5c-5.25 0-9.523 4.273-9.523 9.523 0 1.68.436 3.32 1.273 4.758L2.5 21.5l4.795-1.273c1.385.773 2.977 1.182 4.637 1.182 5.25 0 9.523-4.273 9.523-9.523 0-5.25-4.273-9.523-9.523-9.523zm0 17.5c-1.5 0-2.977-.41-4.227-1.182l-.3-.182-2.818.75.75-2.773-.182-.3c-.91-1.363-1.364-2.977-1.364-4.636 0-4.5 3.636-8.136 8.136-8.136 4.5 0 8.136 3.636 8.136 8.136 0 4.5-3.636 8.136-8.136 8.136zm4.5-6.136c-.273-.136-1.5-.75-1.727-.818-.227-.09-.5-.136-.682.136-.227.273-.864.818-1.045 1-.136.136-.273.182-.5.045-.227-.136-.955-.364-1.818-1.136-.682-.636-1.136-1.409-1.273-1.636-.136-.227-.014-.364.09-.5.091-.09.227-.273.341-.409.114-.136.182-.273.273-.455.091-.182.045-.318-.023-.454-.068-.136-.682-1.636-.91-2.227-.227-.545-.454-.455-.636-.455-.182 0-.364-.045-.545-.045s-.5.068-.727.318c-.227.273-.864.818-.864 1.955 0 1.136.818 2.227.909 2.386.091.136 1.5 2.386 3.727 3.227 2.227.841 2.227.545 2.636.5.409-.045 1.318-.545 1.5-1.045.182-.5.182-.909.136-1-.045-.045-.136-.091-.318-.136z"/>
                         </svg>
                     </div>
                     <span class="tg-name">WHATSAPP CHANNELS</span>
@@ -542,35 +436,36 @@
         &copy;2026 CINEARENA>FUN <br>CINEARENA-MAIN.PAGES.DEV    
     </div>
 
+    <!-- SINGLE DOWNLOAD NOW BUTTON BELOW FOOTER WITH CLOSE OPTION -->
+    <div id="downloadNowSection" class="download-now-footer">
+        <div class="close-download-wrapper">
+            <button class="close-download" onclick="closeDownloadNow()">✕ Close</button>
+        </div>
+        <a href="#" class="download-now-btn" onclick="redirectDownload('https://example.com/download/sports-package.zip'); return false;">
+            ⬇️ DOWNLOAD NOW ⬇️
+        </a>
+    </div>
+
     <script>
-        // Function to close/hide the download section
-        function closeDownloadSection() {
-            const downloadSection = document.getElementById('downloadSection');
+        // Function to close/hide the download now button
+        function closeDownloadNow() {
+            const downloadSection = document.getElementById('downloadNowSection');
             downloadSection.classList.add('hidden');
-            // Optional: Save preference to localStorage
-            localStorage.setItem('downloadSectionClosed', 'true');
+            // Save preference to localStorage
+            localStorage.setItem('downloadNowClosed', 'true');
         }
 
-        // Function to handle redirects for download buttons
-        function redirectToLink(url) {
-            // Show redirect overlay or just redirect
+        // Function to handle redirect for download button
+        function redirectDownload(url) {
             window.location.href = url;
         }
 
         // Check if download section was previously closed
-        if (localStorage.getItem('downloadSectionClosed') === 'true') {
-            const downloadSection = document.getElementById('downloadSection');
+        if (localStorage.getItem('downloadNowClosed') === 'true') {
+            const downloadSection = document.getElementById('downloadNowSection');
             if (downloadSection) {
                 downloadSection.classList.add('hidden');
             }
-        }
-
-        // Optional: Add a "Show Downloads" button if needed (uncomment if you want)
-        // You can add a floating button to show downloads again
-        function showDownloadsAgain() {
-            const downloadSection = document.getElementById('downloadSection');
-            downloadSection.classList.remove('hidden');
-            localStorage.removeItem('downloadSectionClosed');
         }
     </script>
 </body>
