@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="no-referrer">
+    <title>JioTV Web Player · Premium Stream</title>
+    
+    <!-- Shaka Player + UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            background: #000000;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        /* main container — full immersive */
+        .shaka-video-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            object-fit: contain;
+            transition: opacity 0.2s ease;
+        }
+
+        /* ---- YouTube Premium Inspired Theme (enhanced responsiveness) ---- */
+        .youtube-theme .shaka-bottom-controls {
+            width: 100%;
+            padding: 0;
+            z-index: 2;
+        }
+
+        .youtube-theme .shaka-controls-button-panel {
+            height: 52px;
+            padding: 0 16px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        .youtube-theme .shaka-range-container {
+            margin: 4px 12px 4px 12px;
+            top: 0;
+        }
+
+        .youtube-theme .shaka-seek-bar-container {
+            height: 4px;
+            border-radius: 4px;
+            transition: height 0.15s ease;
+        }
+
+        .youtube-theme .shaka-seek-bar-container:hover {
+            height: 6px;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-seek-bar-container .shaka-range-element {
+            opacity: 1;
+        }
+
+        .youtube-theme .shaka-seek-bar-container input[type=range]::-webkit-slider-thumb {
+            background: #ff0000;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+
+        .youtube-theme .shaka-played-range {
+            background: #ff0000 !important;
+        }
+
+        .youtube-theme .shaka-buffered-range {
+            background: rgba(255,255,255,0.4) !important;
+        }
+
+        .youtube-theme .shaka-seek-bar {
+            background: rgba(255,255,255,0.2) !important;
+        }
+
+        /* modern buttons */
+        .youtube-theme .shaka-controls-button-panel > * {
+            margin: 0 2px;
+            padding: 6px 10px;
+            color: #f1f1f1;
+            border-radius: 28px;
+            transition: all 0.2s;
+        }
+
+        .youtube-theme .shaka-controls-button-panel > *:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        /* volume bar animation */
+        .youtube-theme .shaka-controls-button-panel .shaka-volume-bar-container {
+            transition: width 0.2s cubic-bezier(0.2,0.9,0.4,1.1), opacity 0.2s;
+        }
+
+        /* hide spinner (clean) */
+        .shaka-spinner-container,
+        .shaka-spinner,
+        .shaka-spinner-svg {
+            display: none !important;
+            visibility: hidden !important;
+        }
+
+        /* ---- custom UI overlays: watermark + channel selector + info (responsive) ---- */
+        #brand-watermark {
+            position: absolute;
+            bottom: 18px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 9999;
+            pointer-events: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            background: rgba(0,0,0,0.3);
+            padding: 4px 12px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            font-family: monospace;
+        }
+
+        #channel-ui {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 44px;
+            padding: 6px 12px;
+            border: 0.5px solid rgba(255,255,255,0.2);
+            transition: all 0.2s;
+        }
+
+        #channel-selector {
+            background: rgba(20,20,20,0.9);
+            color: white;
+            border: none;
+            padding: 8px 32px 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 40px;
+            cursor: pointer;
+            outline: none;
+            font-family: 'Inter', monospace;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            transition: 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+        }
+
+        #channel-selector:hover {
+            background-color: #2a2a2a;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        #channel-info {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(16px);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 60px;
+            letter-spacing: 0.3px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            font-family: 'Inter', sans-serif;
+            border-left: 4px solid #ff0000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* quality badge & responsive touches */
+        @media (max-width: 640px) {
+            #channel-selector {
+                font-size: 12px;
+                padding: 6px 28px 6px 14px;
+                max-width: 180px;
+            }
+            #brand-watermark {
+                font-size: 10px;
+                bottom: 12px;
+                left: 12px;
+            }
+            #channel-info {
+                font-size: 0.8rem;
+                bottom: 65px;
+                padding: 6px 14px;
+            }
+            .youtube-theme .shaka-controls-button-panel {
+                height: 44px;
+                padding: 0 8px;
+            }
+        }
+
+        /* loading indicator (elegant) */
+        .custom-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top: 4px solid #ff0000;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            z-index: 900;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="youtube-theme">
+
+<div class="shaka-video-container youtube-theme" data-shaka-player-container>
+    <video id="video" autoplay muted playsinline preload="auto" poster=""></video>
+    <div id="brand-watermark">📺 t.me/tv4wap · JioTV HD</div>
+    <div id="channel-ui">
+        <select id="channel-selector" aria-label="Channel selector"></select>
+    </div>
+    <div id="channel-info"></div>
+    <div id="custom-loader" class="custom-loader"></div>
+</div>
+
+<script>
+    // ---------- SECURITY & BRAND PROTECTION (enhanced) ----------
+    const _secureStrings = [
+        'YnJhbmQtd2F0ZXJtYXJr',       // brand-watermark
+        'dC5tZS90djR3YXAgJiMxODc7IEpJb1RWIEhE', // t.me/tv4wap · JioTV HD
+        'aW5uZXJUZXh0',
+        'ZGlzcGxheQ==',
+        'bm9uZQ==',
+        'b3BhY2l0eQ==',
+        'Ym9keQ==',
+        'PGgxIHN0eWxlPSJjb2xvcjojZmYzMzMzO3RleHQtYWxpZ246Y2VudGVyO21hcmdpbi10b3A6MjAlO2ZvbnQtZmFtaWx5OiZwbHVzO0p1c3Q7LE1vbm9zcGFjZTtiYWNrZ3JvdW5kOiMwMDA7cGFkZGluZzoyMHB4OyI+4q2wIEVycm9yOiBTY3JpcHQgY29ycnVwdGVkIOKtsDwvaDE+PHAgc3R5bGU9ImNvbG9yOndoaXRlO3RleHQtYWxpZ246Y2VudGVyIj5WYWxpZCBzb3VyY2U6IHRlbGVncmFtLm1lL3R2NHdhcDwvcD4=',
+        'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL2FsZXg0NTI4eC9tM3UvcmVmcy9oZWFkcy9tYWluL2p0di5tM3U=',
+        'cGxhWXR2LzcuMS41IChMaW51eDtBbmRyb2lkIDE1KSBFeG9QbGF5ZXJMaWIvMi4xOS4wIEdvb2dsZUNhc3Q='
+    ];
+
+    // integrity checker: ensure watermark remains intact
+    (function integrityGuard() {
+        setInterval(function() {
+            try {
+                const watermarkDiv = document.getElementById(atob(_secureStrings[0]));
+                const expectedText = atob(_secureStrings[1]);
+                if (!watermarkDiv || watermarkDiv.innerText !== expectedText ||
+                    window.getComputedStyle(watermarkDiv).display === 'none' ||
+                    parseFloat(window.getComputedStyle(watermarkDiv).opacity) === 0) {
+                    document.body.innerHTML = atob(_secureStrings[7]);
+                    if (typeof player !== 'undefined' && player) player.destroy();
+                }
+            } catch(e) {
+                document.body.innerHTML = atob(_secureStrings[7]);
+            }
+        }, 1200);
+    })();
+
+    // ---------- GLOBALS ----------
+    let player;
+    let ui;
+    let globalChannels = [];
+    let hideInfoTimeout;
+    let loaderTimeout;
+    const loaderElement = document.getElementById('custom-loader');
+
+    function showLoader(show) {
+        if (loaderElement) {
+            loaderElement.style.opacity = show ? '1' : '0';
+            loaderElement.style.visibility = show ? 'visible' : 'hidden';
+        }
+    }
+
+    function getUrlParam(name) {
+        return new URLSearchParams(window.location.search).get(name);
+    }
+
+    // ---------- M3U8 PARSER (ENHANCED: quality extraction, cookies) ----------
+    function parseM3U(m3uText) {
+        const lines = m3uText.split(/\r?\n/).map(l => l.trim());
+        const channels = [];
+        let current = null;
+        let globalCookie = "";
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.startsWith('#EXTINF:')) {
+                current = {};
+                // tvg-id, tvg-name, etc.
+                const tvgIdMatch = line.match(/tvg-id=["']?([^"',]+)["']?/);
+                if (tvgIdMatch) current.tvgId = tvgIdMatch[1];
+                const nameMatch = line.match(/,(.+)$/);
+                current.name = nameMatch ? nameMatch[1].trim() : "📡 Channel " + (channels.length+1);
+                // optional tvg-logo (for future)
+                const logoMatch = line.match(/tvg-logo=["']?([^"']+)["']?/);
+                if (logoMatch) current.logo = logoMatch[1];
+            } 
+            else if (line.startsWith('#KODIPROP:inputstream.adaptive.license_key=')) {
+                const keyRaw = line.match(/license_key=([^:]+):(.+)/);
+                if (keyRaw && current) {
+                    current.keyId = keyRaw[1];
+                    current.key = keyRaw[2];
+                }
+            }
+            else if (line.startsWith('#EXTHTTP:')) {
+                const cookieMatch = line.match(/"cookie":"([^"]+)"/);
+                if (cookieMatch) globalCookie = cookieMatch[1];
+            }
+            else if (line && !line.startsWith('#') && current) {
+                let url = line.split(/[?#|]/)[0];
+                // extract token/cookie if inline
+                const tokenMatch = line.match(/__hdnea__=[a-zA-Z0-9~=/*%+_-]+/);
+                current.cookie = tokenMatch ? tokenMatch[0] : globalCookie;
+                current.url = url;
+                channels.push(current);
+                current = null;
+            }
+        }
+        return channels;
+    }
+
+    // ---------- POPULATE DROPDOWN (responsive, with emoji and index) ----------
+    function populateDropdown(channels) {
+        const selector = document.getElementById('channel-selector');
+        selector.innerHTML = '';
+        if (!channels.length) {
+            const opt = document.createElement('option');
+            opt.text = '⚠️ No channels loaded';
+            selector.appendChild(opt);
+            return;
+        }
+        channels.forEach((ch, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            // show index + name (max 45 chars)
+            let displayName = ch.name.length > 48 ? ch.name.slice(0, 45) + '…' : ch.name;
+            option.text = `${idx + 1}. ${displayName}`;
+            selector.appendChild(option);
+        });
+    }
+
+    // ---------- CHANNEL INFO ANIMATION ----------
+    function showChannelName(name) {
+        const infoDiv = document.getElementById('channel-info');
+        infoDiv.textContent = `📺 ${name}`;
+        infoDiv.style.opacity = '1';
+        document.title = `${name} · JioTV Stream`;
+        if (hideInfoTimeout) clearTimeout(hideInfoTimeout);
+        hideInfoTimeout = setTimeout(() => {
+            infoDiv.style.opacity = '0';
+        }, 3800);
+    }
+
+    // ---------- ENHANCED PLAYBACK (high quality, robust DRM + prefer high bitrate) ----------
+    async function playChannel(channel) {
+        if (!player) return;
+        showLoader(true);
+        showChannelName(channel.name);
+        
+        // Configure DRM with ClearKey if present
+        let drmConfig = { clearKeys: {} };
+        if (channel.keyId && channel.key) {
+            drmConfig = {
+                clearKeys: { [channel.keyId]: channel.key },
+                advanced: {
+                    'org.w3.clearkey': {
+                        videoRobustness: 'SW_SECURE_DECODE',
+                        audioRobustness: 'SW_SECURE_DECODE'
+                    }
+                }
+            };
+        }
+        player.configure({ drm: drmConfig });
+        
+        // Force high quality streaming: prefer high bandwidth and enable adaptive bitrate for best quality
+        player.configure({
+            streaming: {
+                bufferingGoal: 20,          // smoother playback
+                rebufferingGoal: 5,
+                bufferBehind: 30,
+                retryParameters: {
+                    timeout: 20000,
+                    maxAttempts: 6,
+                    baseDelay: 500,
+                    backoffFactor: 1.3
+                },
+                segmentRequestTimeout: 10000,
+                lowLatencyMode: false,      // ensure stable high quality (set false for better quality)
+                autoLowLatencyMode: false,
+                preferNativeHls: true,
+                startAtSegment: -1
+            },
+            manifest: {
+                retryParameters: { timeout: 15000, maxAttempts: 4 },
+                disableAudio: false,
+                disableVideo: false
+            },
+            abr: {
+                enabled: true,
+                defaultBandwidthEstimate: 8000000,  // 8 Mbps starts high for best quality
+                restrictions: { minBandwidth: 0, maxBandwidth: Infinity }
+            },
+            preferredVideoCodecs: ['avc1', 'avc3', 'h264', 'hev1', 'hvc1']  // support wide codecs
+        });
+        
+        // Networking: custom headers + cookie injection + User-Agent (high-quality signature)
+        player.getNetworkingEngine().clearAllRequestFilters();
+        player.getNetworkingEngine().registerRequestFilter((type, request) => {
+            // advanced UA for best CDN response
+            request.headers['User-Agent'] = atob(_secureStrings[9]);
+            request.headers['Origin'] = window.location.origin;
+            if (channel.cookie) {
+                request.headers['Cookie'] = channel.cookie;
+                if ((type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                     type === shaka.net.NetworkingEngine.RequestType.SEGMENT) &&
+                    !request.uris[0].includes('__hdnea__=')) {
+                    const separator = request.uris[0].includes('?') ? '&' : '?';
+                    request.uris[0] += separator + channel.cookie;
+                }
+            }
+            // extra header to emulate premium player
+            request.headers['X-Requested-With'] = 'ShakaPlayer Premium';
+        });
+        
+        try {
+            await player.load(channel.url);
+            const videoEl = document.getElementById('video');
+            videoEl.muted = false;
+            // attempt to set high video bitrate preference (ABR will adapt upwards)
+            if (player.getVariantTracks) {
+                const tracks = player.getVariantTracks();
+                if (tracks && tracks.length) {
+                    const highResTrack = tracks.reduce((best, track) => {
+                        const bw = track.bandwidth || 0;
+                        return bw > (best.bandwidth || 0) ? track : best;
+                    }, tracks[0]);
+                    if (highResTrack) player.selectVariantTrack(highResTrack, true);
+                }
+            }
+            showLoader(false);
+        } catch (error) {
+            console.error('Playback error:', error);
+            showLoader(false);
+            // show temporary error inside info bar
+            const infoDiv = document.getElementById('channel-info');
+            infoDiv.textContent = `⚠️ Stream error: ${error.message?.slice(0, 60) || 'retrying...'}`;
+            infoDiv.style.opacity = '1';
+            infoDiv.style.background = 'rgba(220,20,20,0.8)';
+            setTimeout(() => {
+                if (infoDiv.style.opacity === '1') infoDiv.style.opacity = '0';
+                setTimeout(() => { infoDiv.style.background = 'rgba(0,0,0,0.6)'; }, 800);
+            }, 3000);
+        }
+    }
+    
+    function switchChannel(index) {
+        if (globalChannels && globalChannels[index]) {
+            playChannel(globalChannels[index]);
+            // sync dropdown
+            const selector = document.getElementById('channel-selector');
+            if (selector) selector.value = index;
+        }
+    }
+    
+    // ---------- LOAD CHANNELS AND INITIALIZE PLAYER (HIGH QUALITY ASSURED) ----------
+    async function loadChannelsAndInit() {
+        if (!shaka.Player.isBrowserSupported()) {
+            document.body.innerHTML = '<div style="color:white; text-align:center; margin-top:30%">Browser not supported for HLS streaming</div>';
+            return;
+        }
+        const videoElem = document.getElementById('video');
+        player = new shaka.Player(videoElem);
+        
+        // UI binding with full features (more responsive & touch friendly)
+        const container = document.querySelector('[data-shaka-player-container]');
+        ui = new shaka.ui.Overlay(player, container, videoElem);
+        
+        // Enhanced UI config
+        ui.configure({
+            controlPanelElements: [
+                'play_pause', 'mute', 'time_and_duration', 'spacer',
+                'quality', 'language', 'picture_in_picture', 'fullscreen', 'overflow_menu'
+            ],
+            controlPanelText: { autoHide: true, autoHideTimeout: 2800 },
+            seekBarColors: {
+                base: 'rgba(255,255,255,0.2)',
+                buffered: 'rgba(255,255,255,0.45)',
+                played: '#ff0000'
+            }
+        });
+        
+        // global player config for high-quality adaptive streaming
+        player.configure({
+            streaming: {
+                bufferingGoal: 20,
+                rebufferingGoal: 5,
+                retryParameters: { timeout: 20000, maxAttempts: 5, baseDelay: 500, backoffFactor: 1.5 },
+                preferNativeHls: true,
+                alwaysStreamText: false
+            },
+            abr: { enabled: true, defaultBandwidthEstimate: 10000000, bandwidthUpgrade: 1.5 },
+            drm: { clearKeys: {} }
+        });
+        
+        try {
+            const response = await fetch(atob(_secureStrings[8]), { cache: 'no-store' });
+            if (!response.ok) throw new Error('M3U fetch failed');
+            const m3uText = await response.text();
+            globalChannels = parseM3U(m3uText);
+            if (!globalChannels.length) throw new Error('No channels in playlist');
+            populateDropdown(globalChannels);
+            
+            // handle URL param ?id=... (index or tvg-id or name)
+            const idParam = getUrlParam('id');
+            let targetIndex = 0;
+            if (idParam !== null) {
+                let found = -1;
+                const numeric = parseInt(idParam);
+                if (!isNaN(numeric) && numeric >= 0 && numeric < globalChannels.length) found = numeric;
+                else {
+                    found = globalChannels.findIndex(c => c.tvgId === idParam);
+                    if (found === -1) {
+                        const nameSearch = decodeURIComponent(idParam).toLowerCase();
+                        found = globalChannels.findIndex(c => c.name.toLowerCase().includes(nameSearch));
+                    }
+                }
+                if (found !== -1) targetIndex = found;
+            }
+            // also check legacy param "channel"
+            const legacyChannel = getUrlParam('channel');
+            if (legacyChannel && targetIndex === 0) {
+                const idx = parseInt(legacyChannel);
+                if (!isNaN(idx) && idx >= 0 && idx < globalChannels.length) targetIndex = idx;
+            }
+            document.getElementById('channel-selector').value = targetIndex;
+            await playChannel(globalChannels[targetIndex]);
+        } catch (err) {
+            console.error('FATAL:', err);
+            document.getElementById('channel-selector').innerHTML = '<option>⚠️ Failed to load playlist</option>';
+            showLoader(false);
+        }
+    }
+    
+    // event listeners: dropdown change
+    window.switchChannel = function(index) {
+        const idx = parseInt(index);
+        if (!isNaN(idx) && globalChannels[idx]) playChannel(globalChannels[idx]);
+    };
+    
+    // attach event listener after DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+        const selector = document.getElementById('channel-selector');
+        if (selector) {
+            selector.addEventListener('change', (e) => {
+                const idx = parseInt(e.target.value);
+                if (globalChannels[idx]) playChannel(globalChannels[idx]);
+            });
+        }
+        loadChannelsAndInit();
+    });
+    
+    // handle visibility / resume focus
+    window.addEventListener('load', () => {
+        // ensure video element gets focus for keyboard controls
+        const vid = document.getElementById('video');
+        if (vid) vid.focus();
+    });
+    
+    // additional quality enhancement: detect network speed & adapt
+    if ('connection' in navigator && navigator.connection) {
+        navigator.connection.addEventListener('change', () => {
+            if (player && player.configure) {
+                const effectiveType = navigator.connection.effectiveType;
+                if (effectiveType === '4g' || effectiveType === 'wifi') {
+                    player.configure({ abr: { defaultBandwidthEstimate: 12000000 } });
+                } else if (effectiveType === '3g') {
+                    player.configure({ abr: { defaultBandwidthEstimate: 2500000 } });
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
