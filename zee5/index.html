@@ -1,103 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%231E40AF;stop-opacity:1' /><stop offset='100%' style='stop-color:%233B82F6;stop-opacity:1' /></linearGradient></defs><rect x='5' y='5' width='50' height='50' rx='10' fill='url(%23grad)'/><text x='30' y='38' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='white'>CA</text></svg>">
+  <title>Cine Arena - Zee5 Channels</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a2b6d;
+      --secondary: #2a4ab0;
+      --accent: #FF8C42;
+      --light: #f0f5ff;
+      --dark: #0c1a4a;
+      --card-bg: rgba(18, 33, 85, 0.6);
+    }
 
-	atOptions = {
-		'key' : '701fef7de243c4e8e91e6e6b3a2fea1e',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0c1a4a 0%, #1a2b6d 100%);
+      min-height: 100vh;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
 
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 10% 20%, rgba(42, 74, 176, 0.15) 0%, transparent 20%), 
+                  radial-gradient(circle at 90% 80%, rgba(255, 140, 66, 0.15) 0%, transparent 20%);
+      z-index: -1;
+    }
 
+    .header-gradient {
+      background: rgba(26, 43, 109, 0.85);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
 
-	atOptions = {
-		'key' : '701fef7de243c4e8e91e6e6b3a2fea1e',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
+    .site-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      width: 100%;
+    }
 
+    .section-title {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: white;
+      position: relative;
+      padding-bottom: 15px;
+    }
 
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
 
-        jwplayer.key = "XSuP4qMl+9tK17QNb+4+th2Pm9AWgMO/cYH8CI0HGGr7bdjo";
-        jwplayer("player-container").setup({
-            file: "https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeecinema/default/manifest.mpd",
-            type: "dash",
-            drm: {
-                "clearkey": {
-                    "keyId": "",
-                    "key": ""
-                }
-            },
-            width: "100%",
-            aspectratio: "16:9",
-            autostart: true,
-            mute: false
-        });
+    .channel-card {
+      transition: all .3s ease;
+      border-radius: 12px;
+      overflow: hidden;
+      background: black;
+      position: relative;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      transform: translateY(0);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      min-height: 200px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
-        jwplayer().on('error', function (e) {
-            console.error("Playback error:", e.message);
-        });
+    .channel-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background: rgba(26, 43, 109, 0.7);
+      border-color: rgba(255,140,66,0.3);
+    }
+
+    .channel-image-container {
+      padding: 20px 0 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+      background:var(--card-bg);
+    }
+
+    .channel-image {
+      height: 120px;
+      width: 100%;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .channel-title {
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: rgba(12, 26, 74, 0.8);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform .28s ease-in-out;
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    .telegram-btn {
+      background: #09C842;
+      color: white;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s ease;
+      box-shadow: 0 4px 10px rgba(255, 106, 0, 0.3);
+    }
+
+    .telegram-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .minimal-footer {
+      background: rgba(12, 26, 74, 0.9);
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+      font-size: .9rem;
+      margin-top: auto;
+      backdrop-filter: blur(5px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .telegram-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #09C842 0%, #09C842 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      margin-top: 10px;
+      text-decoration: none;
+      transition: all .3s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(255,106,0,0.18);
+      font-size: 0.95rem;
+    }
+
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .telegram-float {
+      position: fixed;
+      width: 55px;
+      height: 55px;
+      bottom: 20px;
+      right: 20px;
+      background: #0088cc;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform .3s, box-shadow .3s;
+    }
+
+    .telegram-float:hover {
+      transform: scale(1.12);
+      box-shadow: 0 12px 18px rgba(0,0,0,0.4);
+    }
+
+    .telegram-float img {
+      width: 60%;
+      filter: invert(0);
+    }
+      
+      
+      .futuristic-logo {
     
-
-
-function showAdblockPopup() {
-    document.getElementById('adb').style.display = 'flex';
+    position: relative;
 }
 
-async function detectAdblock() {
-    let detected = false;
 
-    // 1. Bait DIV
-    const bait = document.createElement('div');
-    bait.className = 'ad adsbox ad-banner adsense ad-container sponsored';
-    bait.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-    document.body.appendChild(bait);
 
-    // 2. Bait Image
-    const img = document.createElement('img');
-    img.src = 'https://pagead2.googlesyndication.com/pagead/imgad?id=CAASFeDxyz'; // fake image ad
-    img.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-    img.onerror = () => { detected = true; };
-    document.body.appendChild(img);
-
-    // 3. Bait Iframe
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://googleads.g.doubleclick.net/pagead/html/r2023/sample-ad.html';
-    iframe.style.cssText = 'width:1px;height:1px;position:absolute;left:-9999px;top:-9999px;';
-    iframe.onerror = () => { detected = true; };
-    document.body.appendChild(iframe);
-
-    // 4. Google AdSense Script
-    const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-    script.async = true;
-    script.onerror = () => { detected = true; };
-    document.head.appendChild(script);
-
-    // Give adblockers time to remove/hide things
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    if (
-        window.getComputedStyle(bait).display === 'none' ||
-        bait.offsetHeight === 0 ||
-        bait.offsetParent === null
-    ) {
-        detected = true;
-    }
-
-    // Cleanup
-    bait.remove();
-    img.remove();
-    iframe.remove();
-    script.remove();
-
-    return detected;
+.futuristic-logo::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #3b82f6, #10b981, transparent);
+    border-radius: 2px;
 }
 
-window.addEventListener('load', async () => {
-    const blocked = await detectAdblock();
-    if (blocked) {
-        showAdblockPopup();
+    @media (max-width: 1200px) {
+      .channels-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
-});
+
+    @media (max-width: 992px) {
+      .channels-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .channels-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      .section-title { font-size: 1.6rem; }
+      .channel-image-container { padding: 15px 0 0 0; }
+      .channel-image { height: 100px; }
+      .channel-title { font-size: 0.85rem; padding: 10px 6px; }
+    }
+
+    @media (max-width: 480px) {
+      .channels-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .channel-card { min-height: 180px; }
+      .channel-image-container { padding: 12px 0 0 0; }
+      .channel-image { height: 90px; }
+      .channel-title { font-size: 0.8rem; padding: 8px 4px; }
+    }
+
+    @media (max-width: 360px) {
+      .channels-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header-gradient text-white site-container flex items-center justify-between sticky top-0 z-40 py-3">
+    <button id="openMenu" class="lg:hidden text-white" aria-label="Open menu">
+      <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+    <a href="https://cinearenalive.vercel.app" class="absolute left-1/2 transform -translate-x-1/2 lg:static lg:transform-none">
+    <span class="text-2xl font-bold tracking-wide tracking-tight futuristic-logo">
+        CineArena<span class="text-green-400">.Live</span>
+    </span>
+</a>
+    <nav class="hidden lg:flex gap-6" aria-label="Main navigation">
+      <a href="https://cinearenalive.vercel.app" class="text-gray-300 hover:text-white flex items-center gap-1">
+        <i class="fas fa-home"></i>
+        Home
+      </a>
+      <a href="https://cinearenalive.vercel.app/sports/" class="text-gray-300 hover:text-white flex items-center gap-1">
+        <i class="fas fa-baseball-bat-ball text-orange-400"></i>
+        Sports
+      </a>
+      <a href="https://cinearenalive.vercel.app/fancode/" class="text-gray-300 hover:text-white flex items-center gap-1">
+        <i class="fas fa-tv text-blue-400"></i>
+        Fancode
+      </a>
+      <a href="https://cinearenalive.vercel.app/movies/" class="text-gray-300 hover:text-white flex items-center gap-1">
+        <i class="fas fa-film text-yellow-400"></i>
+        Movies
+      </a>
+      <a href="https://cinearenalive.vercel.app/music/" class="text-gray-300 hover:text-white flex items-center gap-1">
+        <i class="fas fa-music text-purple-400"></i>
+        Music
+      </a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <a href="https://t.me/cine_arena" target="_blank" rel="noopener" class="telegram-btn" aria-label="Telegram channel">
+        <i class="fab fa-telegram text-xl" aria-hidden="true"></i>
+      </a>
+    </div>
+  </header>
+
+  <div id="mobileMenu" class="mobile-menu fixed inset-0 z-50 lg:hidden" aria-hidden="true">
+    <div id="overlay" class="absolute inset-0 bg-black/70" onclick="toggleMenu()"></div>
+    <div class="relative w-4/5 max-w-xs h-full bg-[#0c1a4a] shadow-xl" role="dialog" aria-modal="true">
+      <div class="px-4 py-3 flex justify-between items-center header-gradient">
+        <span class="text-xl font-bold text-white">
+          CineArena<span class="text-green-400">.Live</span>
+        </span>
+        <button onclick="toggleMenu()" class="text-white p-1 rounded-full hover:bg-white/20" aria-label="Close menu">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <nav class="p-4">
+        <ul class="space-y-3">
+          <li>
+            <a href="https://cinearenalive.vercel.app" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fas fa-home mr-3 text-lg text-blue-400"></i>
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="https://cinearenalive.vercel.app/sports/" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fas fa-baseball-bat-ball mr-3 text-lg text-orange-400"></i>
+              Sports
+            </a>
+          </li>
+          <li>
+            <a href="https://cinearenalive.vercel.app/fancode/" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fas fa-tv mr-3 text-lg text-blue-400"></i>
+              Fancode
+            </a>
+          </li>
+          <li>
+            <a href="https://cinearenalive.vercel.app/movies/" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fas fa-film mr-3 text-lg text-yellow-400"></i>
+              Movies
+            </a>
+          </li>
+          <li>
+            <a href="https://cinearenalive.vercel.app/music/" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fas fa-music mr-3 text-lg text-purple-400"></i>
+              Music
+            </a>
+          </li>
+          <li>
+            <a href="https://t.me/cine_arena" target="_blank" rel="noopener" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white">
+              <i class="fab fa-telegram mr-3 text-lg text-blue-300"></i>
+              Telegram Channel
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <main class="site-container px-4 py-6 mx-auto" id="main">
+    <h2 class="section-title">
+      <i class="fas fa-baseball-bat-ball text-orange-400 mr-2"></i>
+      Zee5 Channels
+    </h2>
+    
+    <!-- Channels container -->
+    <div class="channels-grid" id="channelGrid" aria-live="polite">
+      <!-- Sport channel cards will be inserted here -->
+    </div>
+    
+    <!-- Loading indicator -->
+    <div id="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      <p class="mt-4 text-gray-300">Loading sports channels...</p>
+    </div>
+    
+    <!-- Disclaimer -->
+    <div class="mt-8 p-4 bg-blue-900/30 rounded-lg border border-blue-700/50">
+      <p class="text-sm text-gray-300 text-center">
+        This site is not affiliated with any television channel. All content is copyright of their respective owners. 
+        We cannot accept any responsibility for the content on this site. We cannot control or influence any audiovisual 
+        content on this site. Viewers are expected to be wise in processing the information obtained. All links provided 
+        on this site are indexed from third-party websites. We do not host any content.
+      </p>
+      <p class="text-center mt-2">
+        <a href="https://t.me/stream247" class="text-cyan-300 hover:text-cyan-200">Contact: https://t.me/stream247</a>
+      </p>
+    </div>
+  </main>
+
+  <a href="https://t.me/cine_arena" class="telegram-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+  </a>
+
+  <div class="minimal-footer">
+    <div class="site-container">
+      <a href="https://t.me/cine_arena" target="_blank" rel="noopener" class="telegram-link">
+        <i class="fab fa-telegram" aria-hidden="true"></i>
+        Join our Telegram Channel
+      </a>
+    </div>
+  </div>
+
+  <script>
+const _0x98fc67=_0x3d14;(function(_0x57d071,_0x2dbfb7){const _0x583a71=_0x3d14,_0x3f0b46=_0x57d071();while(!![]){try{const _0x3ef0c0=-parseInt(_0x583a71(0x1fb))/0x1+-parseInt(_0x583a71(0x1e5))/0x2*(-parseInt(_0x583a71(0x1ea))/0x3)+-parseInt(_0x583a71(0x212))/0x4+parseInt(_0x583a71(0x1e9))/0x5*(-parseInt(_0x583a71(0x1e1))/0x6)+parseInt(_0x583a71(0x1fa))/0x7*(-parseInt(_0x583a71(0x206))/0x8)+-parseInt(_0x583a71(0x1f4))/0x9+parseInt(_0x583a71(0x209))/0xa;if(_0x3ef0c0===_0x2dbfb7)break;else _0x3f0b46['push'](_0x3f0b46['shift']());}catch(_0x5d0226){_0x3f0b46['push'](_0x3f0b46['shift']());}}}(_0x42e5,0xef166));class SportsChannelsApp{constructor(){const _0x517b8e=_0x3d14;this[_0x517b8e(0x1f7)]();}[_0x98fc67(0x1f7)](){const _0x175ba6=_0x98fc67;this[_0x175ba6(0x1ff)](),this[_0x175ba6(0x1f1)]();}[_0x98fc67(0x1ff)](){const _0x2f81fb=_0x98fc67;document['getElementById'](_0x2f81fb(0x1e2))[_0x2f81fb(0x207)](_0x2f81fb(0x201),()=>this[_0x2f81fb(0x1eb)]());}['toggleMenu'](){const _0x421c9e=_0x98fc67,_0x302e7f=document[_0x421c9e(0x20a)]('mobileMenu');_0x302e7f[_0x421c9e(0x1f8)]['toggle']('active');}async[_0x98fc67(0x1f1)](){const _0x4ee9bb=_0x98fc67;try{const _0x334084=await fetch(_0x4ee9bb(0x1e0)),_0x3eac5f=await _0x334084[_0x4ee9bb(0x1fc)](),_0x28f990=document['getElementById']('channelGrid'),_0x88ee4e=document[_0x4ee9bb(0x20a)](_0x4ee9bb(0x1ec));if(_0x88ee4e)_0x88ee4e[_0x4ee9bb(0x1ef)][_0x4ee9bb(0x1f0)]=_0x4ee9bb(0x20b);_0x28f990[_0x4ee9bb(0x20c)]='',_0x3eac5f[_0x4ee9bb(0x20d)](_0x315c59=>{const _0x5aa196=_0x4ee9bb,_0x5ee274=this[_0x5aa196(0x211)](_0x315c59);_0x28f990[_0x5aa196(0x1f6)](_0x5ee274);});}catch(_0x14168c){console['error'](_0x4ee9bb(0x204),_0x14168c);const _0x441ba7=document[_0x4ee9bb(0x20a)]('channelGrid'),_0x4ce45b=document[_0x4ee9bb(0x20a)](_0x4ee9bb(0x1ec));if(_0x4ce45b)_0x4ce45b[_0x4ee9bb(0x1ef)]['display']=_0x4ee9bb(0x20b);_0x441ba7[_0x4ee9bb(0x20c)]=_0x4ee9bb(0x202);}}[_0x98fc67(0x211)](_0x5ef957){const _0xe8d0ac=_0x98fc67,_0x255eff=document[_0xe8d0ac(0x205)]('div');return _0x255eff['className']=_0xe8d0ac(0x1df),_0x255eff[_0xe8d0ac(0x207)](_0xe8d0ac(0x201),()=>{const _0x31aa88=_0xe8d0ac;if(_0x5ef957['id'])window['location'][_0x31aa88(0x203)]=_0x31aa88(0x1f2)+_0x5ef957['id'];else{const _0x102b75=_0x31aa88(0x20e)+encodeURIComponent(_0x5ef957[_0x31aa88(0x1ee)])+_0x31aa88(0x1fe)+_0x5ef957[_0x31aa88(0x1e4)]+_0x31aa88(0x1e6)+_0x5ef957[_0x31aa88(0x1f5)];window[_0x31aa88(0x1fd)]['href']=_0x102b75;}}),_0x255eff['innerHTML']=_0xe8d0ac(0x208)+(_0x5ef957[_0xe8d0ac(0x1de)]?_0xe8d0ac(0x20f)+_0x5ef957[_0xe8d0ac(0x1de)]+'\x27)':'')+_0xe8d0ac(0x1f9)+(!_0x5ef957[_0xe8d0ac(0x1de)]?'<div\x20class=\x22h-full\x20flex\x20items-center\x20justify-center\x20text-gray-400\x22><i\x20class=\x22fas\x20fa-tv\x20text-3xl\x22></i></div>':'')+_0xe8d0ac(0x210)+_0x5ef957[_0xe8d0ac(0x1ed)]+_0xe8d0ac(0x1e8),_0x255eff;}}function _0x42e5(){const _0x1c996e=['217VlKRrU','589137Ajvuot','json','location','&keyId=','setupEventListeners','active','click','<p\x20class=\x22text-center\x20text-gray-400\x20col-span-full\x22>Failed\x20to\x20load\x20sports\x20channels.\x20Please\x20try\x20again\x20later.</p>','href','Error\x20loading\x20sports\x20channels:','createElement','207280PqhxqN','addEventListener','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22channel-image-container\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22channel-image\x22\x20style=\x22','29118380RtLPtj','getElementById','none','innerHTML','forEach','player.html?url=','background-image:\x20url(\x27','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22channel-title\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','createChannelCard','7289884ufmDjk','image','channel-card','https://cinearena.fun/api/zee5.json','74964FkjrUw','openMenu','DOMContentLoaded','keyId','404oSZVlD','&key=','sportsApp','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20','35aHhGLO','26646HqFbiz','toggleMenu','loading','title','url','style','display','loadChannels','https://cinearena.fun/1/zee5/?id=','mobileMenu','3819816YlNUXz','key','appendChild','init','classList','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20'];_0x42e5=function(){return _0x1c996e;};return _0x42e5();}function _0x3d14(_0x2a25f0,_0x2ba155){const _0x42e5b5=_0x42e5();return _0x3d14=function(_0x3d14bc,_0x3d5c8a){_0x3d14bc=_0x3d14bc-0x1de;let _0x306e0a=_0x42e5b5[_0x3d14bc];return _0x306e0a;},_0x3d14(_0x2a25f0,_0x2ba155);}document[_0x98fc67(0x207)](_0x98fc67(0x1e3),()=>{const _0x581048=_0x98fc67;window[_0x581048(0x1e7)]=new SportsChannelsApp();});function toggleMenu(){const _0x176a74=_0x98fc67,_0x440235=document[_0x176a74(0x20a)](_0x176a74(0x1f3));_0x440235[_0x176a74(0x1f8)]['toggle'](_0x176a74(0x200));}
+  </script>
+    
+    
+ 
+</body>
+</html>
