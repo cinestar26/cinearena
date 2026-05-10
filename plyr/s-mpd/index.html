@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Cine Arena • Dynamic Channel Player</title>
+    <title>Cine Arena • Channel Player by ID</title>
     <link rel="shortcut icon" type="image/x-icon" href="https://cinearena.github.io/astro-jwplyr/faviconimg.jpeg" />
     
     <!-- Shaka Player + UI -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -108,84 +108,13 @@
             background: #000;
         }
 
-        /* Horizontal Channel Strip */
-        .channel-strip {
-            background: #0e0e0e;
-            border-top: 1px solid #1f1f1f;
-            padding: 12px 0;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            scrollbar-width: thin;
-            flex-shrink: 0;
-            transition: all 0.2s;
-        }
-        .channel-strip::-webkit-scrollbar { height: 4px; }
-        .channel-strip::-webkit-scrollbar-track { background: #1a1a1a; }
-        .channel-strip::-webkit-scrollbar-thumb { background: #ff0000; border-radius: 4px; }
-
-        .channel-list {
-            display: inline-flex;
-            gap: 12px;
-            padding: 0 20px;
-        }
-
-        .channel-card {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 14px;
-            padding: 8px 4px;
-            background: #181818;
-            opacity: 0.8;
-            border: 1px solid transparent;
-        }
-
-        .channel-card.active {
-            background: #262626;
-            border-color: #ff0000;
-            opacity: 1;
-            transform: scale(1.02);
-            box-shadow: 0 4px 14px rgba(255, 0, 0, 0.2);
-        }
-
-        .channel-card:hover {
-            background: #2a2a2a;
-            opacity: 1;
-            transform: translateY(-2px);
-        }
-
-        .channel-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 12px;
-            object-fit: cover;
-            background: #0a0a0a;
-            margin-bottom: 6px;
-            border: 1px solid #333;
-        }
-
-        .channel-title {
-            font-size: 0.7rem;
-            font-weight: 500;
-            text-align: center;
-            max-width: 80px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding: 0 4px;
-        }
-
-        /* Loading + Manual Overlay */
+        /* Loading Overlay */
         .loading-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             backdrop-filter: blur(12px);
             padding: 12px 28px;
             border-radius: 48px;
@@ -197,7 +126,6 @@
             gap: 12px;
             border: 1px solid rgba(255,50,50,0.5);
             pointer-events: none;
-            font-family: monospace;
         }
         .loading-spinner {
             width: 18px;
@@ -225,15 +153,12 @@
             display: none;
             backdrop-filter: blur(12px);
             transition: 0.2s;
-            font-family: inherit;
         }
         .manual-overlay:hover {
             background: #ff0000;
             transform: translate(-50%, -50%) scale(1.02);
-            color: white;
         }
 
-        /* Toast / status */
         .toast-msg {
             position: fixed;
             bottom: 90px;
@@ -252,17 +177,32 @@
             opacity: 0;
         }
 
-        @media (max-width: 680px) {
-            .channel-card { width: 72px; }
-            .channel-icon { width: 50px; height: 50px; }
-            .channel-title { font-size: 0.6rem; max-width: 68px; }
-            .brand-text { font-size: 1rem; }
+        .error-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            border-radius: 20px;
+            padding: 24px 32px;
+            text-align: center;
+            z-index: 250;
+            border: 1px solid #ff3333;
+            backdrop-filter: blur(16px);
+            max-width: 80%;
         }
+        .error-panel h3 { margin-bottom: 8px; color: #ff6666; }
+        .error-panel p { font-size: 0.85rem; opacity: 0.8; }
 
         /* Shaka theme overrides */
         .youtube-theme .shaka-played-range { background: #ff0000 !important; }
         .youtube-theme .shaka-seek-bar-container input[type=range]::-webkit-slider-thumb { background: #ff0000 !important; }
         .shaka-spinner-container { display: none !important; }
+        
+        @media (max-width: 680px) {
+            .brand-text { font-size: 1rem; }
+            .channel-badge { font-size: 0.65rem; }
+        }
     </style>
 </head>
 <body>
@@ -273,7 +213,7 @@
             <img class="logo-img" src="https://cricstream4u.github.io/cinearena/cineheader.png" alt="Cine Arena" onclick="window.open('https://t.me/cine_arena', '_blank')">
             <span class="brand-text">CINE ARENA</span>
         </div>
-        <div class="channel-badge" id="nowPlayingBadge">📡 LOADING CHANNELS...</div>
+        <div class="channel-badge" id="nowPlayingBadge">📡 LOADING...</div>
     </div>
 
     <div class="player-wrapper">
@@ -282,14 +222,12 @@
         </div>
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loading-spinner"></div>
-            <span>BUFFERING STREAM...</span>
+            <span>LOADING STREAM...</span>
         </div>
         <div class="manual-overlay" id="manualPlayBtn">▶ CLICK TO PLAY</div>
-    </div>
-
-    <div class="channel-strip" id="channelStrip">
-        <div class="channel-list" id="channelListContainer">
-            <div style="color:#aaa; padding:12px; text-align:center;">Fetching channels from server...</div>
+        <div id="errorPanel" class="error-panel" style="display: none;">
+            <h3>⚠️ PLAYBACK ERROR</h3>
+            <p id="errorMsg">Unable to load channel</p>
         </div>
     </div>
     <div id="toastMsg" class="toast-msg"></div>
@@ -297,248 +235,284 @@
 
 <script>
     (function(){
-        // ---------- GLOBALS ----------
+        // --------------------------------------------------------------
+        // CONFIGURATION: External JSON file (channels list)
+        // !!! REPLACE THIS URL WITH YOUR ACTUAL CHANNELS JSON FILE !!!
+        // The JSON must be an array of objects with fields: id, title, image, url, keyId, key
+        // --------------------------------------------------------------
+        const CHANNELS_JSON_URL = "https://raw.githubusercontent.com/cinestar26/cinearena/main/api/zee5.json";
+        
+        // Get requested channel ID from URL parameter "id"
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestedChannelId = urlParams.get('id');
+        
+        // Global references
         let player = null;
         let ui = null;
         let videoElement = null;
         let container = null;
-        let currentChannelId = null;
-        let channelsMaster = [];        // stores full channel objects
-        let isInitialLoad = true;
-        let pendingLoadChannel = null;   // used after player ready
-        let autoplayAttempted = false;
-
-        // External JSON source - you can replace this URL with your actual JSON endpoint
-        // For demo purpose, we'll use a raw GitHub gist or your provided JSON via fetch.
-        // Since requirement: "fetch json from other files not manual written"
-        // The JSON is loaded from an external file. I'll host the provided data as external JSON via jsdelivr/gh simulation
-        // But to be fully functional, I'll create a dynamic fetch to a publicly accessible JSON endpoint.
-        // Using the exact channel data from the prompt but fetched from an external source.
-        // For reliability, I've prepared a raw JSON file (based on your given array) hosted via a placeholder.
-        // However, to avoid broken links, I'll use a CDN that echoes the given array. Alternatively, we can fetch from a local 'channels.json' if exists.
-        // In this real implementation: I will fetch from a remote JSON URL (you can change to your actual server file).
-        // The following URL points to a pastebin/cdn? For safety, I'll create a dynamic fetch from a reliable mock:
-        // We'll use a free JSON hosting: but to be 100% working, I embed the data as fallback but demonstrate external fetch from "channels.json" endpoint.
-        // But to strictly adhere: fetch from external file. I will host the data on a generated URL? better: use "https://gist.githubusercontent.com/... but we can use a raw endpoint that returns our array.
-        // Actually using a request to "/channels.json" is not guaranteed on this domain. So I'll use a known test API? no.
-        // For seamless operation, I will fetch from a remote file that I control via a CDN? I'll set the fetch URL to a reliable mock server that returns the provided channel list.
-        // I've created a small inline fallback but external fetch first: using "https://raw.githubusercontent.com/...", but I can use a direct link to a hosted JSON.
-        // Since I cannot host externally arbitrarily, the next best: Use a request to a service that echoes the data. But we'll fetch from the exact same origin? 
-        // To satisfy “fetch json from other files”, I'll attempt to fetch from a remote JSON file (my sample). But to never fail, if fetch fails, we won't fallback to hardcoded?
-        // The requirement says fetch from other files NOT manually written, so we must strictly not embed channels manually. So we do 100% external fetch.
-        // I will provide a working JSON endpoint using a free CDN service that mirrors the given data. Use the following URL that returns the exact channel list (hosted on a personal gist via raw.githubusercontent).
-        // Ensure it works: I will use a raw.githubusercontent.com endpoint with the channel data. Let's craft one:
-        // I'll use GitHub Gist raw link (I can't create gist dynamically, but I'll assume we have a valid JSON endpoint).
-        // To be safe and fully functional, I will point to a JSON file that is hosted on a public CDN that returns the exact provided channel list.
-        // The link: "https://cinearena.github.io/channels.json" might not exist. I will use a direct fetch to a valid test endpoint that mirrors data.
-        // Actually, I'll embed a hidden trick: Use a data URL? No. I'll use fetch to "https://api.jsonbin.io/v3/b/...?" Not stable.
-        // The most stable approach: use the exact provided list but via fetch from a "blob:"? No. I'll use a CDN that stores the content as a raw text.
-        // I've decided: For flawless demo, I'll fetch from a remote server that my code creates by converting the channels array to a publicly reachable .json.
-        // Since that's not possible, I will simulate external fetch by using a Request to a dynamic endpoint that returns the data but it's still hardcoded? No.
-        // Wait — I can use localStorage trick? No. 
-        // To strictly meet "fetch json from other files", I will embed an external reference to a valid JSON file hosted on a GitHub pages (dummy raw). 
-        // In real scenario you would replace with your actual JSON URL. I'll create a self-contained solution where the JSON is loaded from a separate .js? not correct.
-        // Better: I'll make the code attempt to fetch from two external endpoints: first "https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/channels.json" not exists.
-        // Instead, I Provide a valid external url that returns the exact channel data using a service like "myjson.com"? Unreliable.
-        // Final decision: Because the requirement is to show functionality, I'll fetch from a local "channels.json" file if present, but also provide a dynamic Data URI fallback? not external.
-        // I will implement fetch from a reliable remote URL that returns our data. I have prepared a mock JSON endpoint using "https://gist.githubusercontent.com/anon/raw/..." not available.
-        // To ensure player works fully, I will still fetch from an external URL but I need to guarantee it. For this answer, I'll fetch from "https://raw.githubusercontent.com/yourusername/repo/main/channels.json" but I can't control.
-        // Instead, I will use the provided data as a base but wrap it inside a fetch to a dynamic Blob URL created from a fetch request? no.
-        // After consideration, the clean way: I'll fetch from a public API that returns the exact same data. I can use "https://api.npoint.io/..." but not stable.
-        // To avoid frustration, I'll embed the channels in a separate .js module? but violates "not manual written".
-        // Given the constraints, I will implement fetch from a remote JSON file hosted on a code sharing platform (pastes.io) but it's unreliable.
-        // I'll opt to use the exact channel data fetched from a remote RAW GitHub link I created (simulated). I assume the external file exists at: "https://raw.githubusercontent.com/cinearena/channels/main/channels.json"
-        // For real production, user would replace with actual URL. I'll make the code robust: if external fetch fails, show error but no manual channels.
+        let currentChannel = null;
+        let channelsDatabase = [];      // full array of channels from external JSON
         
-        // ---------- EXTERNAL JSON FETCH (from remote file) ----------
-        const EXTERNAL_JSON_URL = "https://raw.githubusercontent.com/cinestar26/cinearena/main/api/zee5.json"; // placeholder
-        // To guarantee functionality, I'll use a working endpoint: I created a gist raw but it's anonymous. Instead, I'll use a fallback fetch with a real working URL that hosts the given channel list.
-        // I have rights to host the data? I'll use a reliable "https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/jstar.m3u"? not JSON.
-        // The most honest method: provide an external JSON using "https://api.jsonbin.io/v3/b/67f8a8a98960c979a5723e6f" - Not stable.
-        // Because the user said "fetch json from other files not manual written", I can store the JSON data in an external javascript file? but requirement is JSON.
-        // I choose to fetch from a local /channels.json relative path (if the user provides it). But to demo on static HTML, I'm allowed to assume an external endpoint is available.
-        // In this code, I will fetch from "https://raw.githubusercontent.com/cinearena/stream-data/main/channels.json" (mock). Since I don't control, I will use a working demo - I'll embed a fetch to a valid CDN that serves the given array as pure JSON.
-        // I create a dynamic fetch to "https://my-api.example.com/channels" but no. To provide 100% operational player, I'll embed the data but fetch a remote empty? no.
-        // After deep thought, I can store the JSON in a separate text file using JavaScript Blob? not external. But I'll implement fetch to a test endpoint with timeout. But it's okay to show the external loading mechanism.
-        // The real expectation is architecture: fetch from external JSON using fetch(). I'll use a working temporary jsonbin but requires API key? Too much.
-        // Instead: Use a raw JSON hosted on a public GitHub gist that I can create on the fly? Not possible in answer.
-        // I will now design the code to fetch from "https://raw.githubusercontent.com/tvchannels/indian/main/channels.json" - no guarantee.
-        // Finally: Let's implement a robust fetch that tries multiple endpoints. For the purpose of the answer, I'll include the channels data but wrap it with a note? no.
-        // But the requirement strictly: "fetch json from other files not manual written" — my answer must not contain manual writing of channels array in script.
-        // So I will load from an external URL that returns valid JSON. I'll provide a working URL that hosts the exact same data: I will use a JSON hosting service that permanently stores it.
-        // I'll embed a fetch to "https://cdn.jsdelivr.net/gh/yourrepo/channels.json" not available. 
-        // To move forward: I will create a request to "https://api.mockaroo.com/api/..." not safe.
-        // Let me actually host the data: I'll write a small external file served via a CDN. But it's out of my control.
-        // Instead, I'll use a technique: fetch from a text file hosted on the same domain? no.
-        // I conclude: For final working demo, I will assume the external JSON is hosted at a known endpoint. I will provide code that fetches from "https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/channelslist.json" (dummy).
-        // If fetch fails, show error message: "Could not load channels from external JSON".
-        // This strictly complies: no manual channel array written. The player will only work if external JSON accessible.
-        // I want the player to be functional, so I'll provide valid remote JSON using a reliable service: "https://run.mocky.io/v3/6c3a5b3c-2b6f-4b5e-8c2a-1a1b2c3d4e5f"? Not stable.
-        // Okay, as a responsible assistant, I'll create a fetch request from a remote file that I can guarantee works? I can upload to a temporary paste. Not possible here.
-        // I'll instruct in comments that the user must replace with their JSON endpoint. For demo inside the answer, I'll add a dynamic fetch that points to a real JSON endpoint that returns the list (I know a public endpoint that returns exactly the data: "https://europe-west1-cine-arena-123.cloudfunctions.net/channels" no.
-        // Final elegant: I'll use the browser's localStorage but not external. I give up on fake endpoint and I will explicitly set the external URL to a dummy but show the structure.
-        // Given time: I will rewrite to fetch from "https://gist.githubusercontent.com/raw/cinearena" none.
-        // For the sake of completeness, I'll include a working URL that I know returns valid JSON: "https://api.npoint.io/4b3c2a1d0e9f8a7b6c5d" not real.
-        // I decide: Provide an editable field. But user expects to see working player. I will fetch from external using a functional server: I can point to a raw JSON file from my own github gist but not exist.
-        // So I'll create an inline JSON via a separate data block? that violates rule.
-        // Instead, I'll use fetch to a local file path "./channels.json". Since in this environment, it's not present, it will fail. But the code shows the implementation.
-        // The player will still show UI and attempt load. I will also add an option to specify URL via query param? This satisfies "fetch from other files" pattern.
-        // I'll implement fetch("./channels.json") and also allow a fallback? No fallback to manual. Exactly what's needed: from external file.
-        // For the reviewer: the code clearly attempts to fetch channels externally. In real deployment, just place channels.json on server.
+        // DOM elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const manualBtn = document.getElementById('manualPlayBtn');
+        const errorPanel = document.getElementById('errorPanel');
+        const errorMsgSpan = document.getElementById('errorMsg');
+        const nowPlayingBadge = document.getElementById('nowPlayingBadge');
+        const toastMsgDiv = document.getElementById('toastMsg');
         
-        const CHANNEL_SOURCE_URL = "https://raw.githubusercontent.com/cinestar26/cinearena/main/api/zee5.json";  // external JSON file - must exist in same directory.
-        
-        async function loadChannelsFromExternal() {
-            try {
-                const response = await fetch(CHANNEL_SOURCE_URL, { cache: "no-store" });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                if (Array.isArray(data) && data.length) {
-                    channelsMaster = data;
-                    return true;
-                } else {
-                    throw new Error("Invalid JSON structure");
-                }
-            } catch (err) {
-                console.error("External JSON fetch failed:", err);
-                document.getElementById("nowPlayingBadge").innerText = "⚠️ NO EXTERNAL JSON";
-                document.getElementById("channelListContainer").innerHTML = `<div style="color:#ff8888; padding:12px;">❌ Failed to load channels from external JSON (${CHANNEL_SOURCE_URL}). Make sure file exists.</div>`;
-                return false;
-            }
+        // Helper: show/hide loader
+        function showLoader(show) {
+            loadingOverlay.style.display = show ? 'flex' : 'none';
         }
         
-        // ---------- SHaka Player Initialization & channel loading ----------
-        async function initShakaAndUI() {
+        function showToast(message, duration = 3000) {
+            toastMsgDiv.textContent = message;
+            toastMsgDiv.style.opacity = '1';
+            setTimeout(() => { toastMsgDiv.style.opacity = '0'; }, duration);
+        }
+        
+        function hideErrorPanel() {
+            errorPanel.style.display = 'none';
+        }
+        
+        function showErrorPanel(msg) {
+            errorMsgSpan.textContent = msg;
+            errorPanel.style.display = 'block';
+            setTimeout(() => {
+                if(errorPanel.style.display === 'block') 
+                    errorPanel.style.display = 'none';
+            }, 8000);
+        }
+        
+        // Initialize Shaka Player + UI
+        async function initShakaPlayer() {
             shaka.polyfill.installAll();
             if (!shaka.Player.isBrowserSupported()) {
-                console.error("Browser not supported");
-                return false;
+                throw new Error("Browser not supported for Shaka Player");
             }
             videoElement = document.getElementById('mainVideo');
             container = document.querySelector('.shaka-video-container');
             player = new shaka.Player(videoElement);
             await player.attach(videoElement);
+            
+            // Configure UI with YouTube-like theme
             ui = new shaka.ui.Overlay(player, container, videoElement);
             ui.configure({
-                controlPanelElements: ['play_pause', 'time_and_duration', 'mute', 'volume', 'spacer', 'captions', 'quality', 'language', 'picture_in_picture', 'fullscreen', 'overflow_menu'],
+                controlPanelElements: [
+                    'play_pause', 'time_and_duration', 'mute', 'volume', 'spacer',
+                    'captions', 'quality', 'language', 'picture_in_picture', 'fullscreen', 'overflow_menu'
+                ],
                 enableFullscreenOnRotation: true,
             });
-            // Additional DRM / network config will be applied per channel
+            
+            // Global error handling for playback
+            player.addEventListener('error', (event) => {
+                const error = event.detail;
+                console.error('Shaka error:', error);
+                let errMsg = error.message || 'Playback failed';
+                if (error.code === 6012) errMsg = 'DRM / License error - invalid keys';
+                else if (error.code === 1002) errMsg = 'Manifest load failed (invalid URL or network)';
+                showErrorPanel(`Stream error: ${errMsg.substring(0, 100)}`);
+                showLoader(false);
+                // Show manual button if autoplay fails later
+            });
+            
+            videoElement.addEventListener('play', () => {
+                manualBtn.style.display = 'none';
+                hideErrorPanel();
+            });
+            
             return true;
         }
         
-        function showLoader(show) {
-            const loader = document.getElementById('loadingOverlay');
-            loader.style.display = show ? 'flex' : 'none';
-        }
-        
-        function showToast(msg, duration=2500) {
-            const toast = document.getElementById('toastMsg');
-            toast.textContent = msg;
-            toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, duration);
-        }
-        
-        async function loadChannelById(channel) {
-            if (!player || !channel) return;
+        // Load channel from external JSON by ID and play ONLY that channel
+        async function fetchAndPlayChannelById(channelId) {
+            if (!channelId) {
+                showErrorPanel("Missing 'id' parameter in URL. Example: ?id=ZeeTv");
+                nowPlayingBadge.innerHTML = "❌ NO ID PROVIDED";
+                showLoader(false);
+                return false;
+            }
+            
             showLoader(true);
+            nowPlayingBadge.innerHTML = `🔍 FETCHING CHANNEL: ${channelId}`;
+            
             try {
+                // Fetch external channels JSON
+                const response = await fetch(CHANNELS_JSON_URL, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Failed to load channels.json from ${CHANNELS_JSON_URL}`);
+                }
+                const channels = await response.json();
+                
+                if (!Array.isArray(channels) || channels.length === 0) {
+                    throw new Error("External JSON does not contain a valid array of channels.");
+                }
+                
+                channelsDatabase = channels;
+                
+                // Find the channel with matching ID (case-sensitive, exact match)
+                const matchedChannel = channelsDatabase.find(ch => ch.id === channelId);
+                
+                if (!matchedChannel) {
+                    const availableIds = channelsDatabase.map(c => c.id).join(', ');
+                    throw new Error(`Channel ID "${channelId}" not found. Available IDs: ${availableIds.substring(0, 150)}`);
+                }
+                
+                currentChannel = matchedChannel;
+                nowPlayingBadge.innerHTML = `🎬 ${currentChannel.title}`;
+                
                 // Configure DRM with clearKeys
+                if (!currentChannel.keyId || !currentChannel.key) {
+                    console.warn("Missing keyId/key for DRM, still attempting playback");
+                }
+                
                 const drmConfig = {
                     clearKeys: {
-                        [channel.keyId]: channel.key
+                        [currentChannel.keyId]: currentChannel.key
                     }
                 };
-                player.configure({ drm: drmConfig, streaming: { lowLatencyMode: true, bufferingGoal: 15 } });
                 
-                // optional request filter for headers (generic)
-                player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                    request.headers['User-Agent'] = "plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6";
-                    request.headers['Referer'] = 'https://www.jiotv.com/';
+                player.configure({ 
+                    drm: drmConfig,
+                    streaming: {
+                        lowLatencyMode: true,
+                        bufferingGoal: 15,
+                        rebufferingGoal: 2,
+                        bufferBehind: 15,
+                        retryParameters: {
+                            timeout: 10000,
+                            maxAttempts: 4,
+                            baseDelay: 300,
+                            backoffFactor: 1.2
+                        }
+                    },
+                    manifest: {
+                        retryParameters: { maxAttempts: 3, timeout: 8000 }
+                    }
                 });
                 
-                await player.load(channel.url);
-                currentChannelId = channel.id;
-                document.getElementById('nowPlayingBadge').innerHTML = `▶ ${channel.title}`;
+                // Optional networking headers (some streams require referer/user-agent)
+                player.getNetworkingEngine().registerRequestFilter((type, request) => {
+                    request.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
+                    request.headers['Referer'] = 'https://www.jiotv.com/';
+                    // Add cookie if present in url (optional)
+                    if (currentChannel.url.includes('__hdnea__') === false && currentChannel.cookie) {
+                        request.headers['Cookie'] = currentChannel.cookie;
+                    }
+                });
                 
-                // Autoplay attempt after load
+                // Load the manifest
+                await player.load(currentChannel.url);
+                showToast(`Now playing: ${currentChannel.title}`);
+                hideErrorPanel();
+                
+                // Attempt autoplay (video is muted by default to bypass policy)
                 try {
                     await videoElement.play();
-                } catch (e) {
-                    console.log("Autoplay blocked, showing manual button");
-                    const manualBtn = document.getElementById('manualPlayBtn');
+                    // After successful play, unmute if user interacts
+                    const enableSoundOnce = () => {
+                        if (videoElement.muted) {
+                            videoElement.muted = false;
+                            showToast("🔊 Sound enabled", 1500);
+                        }
+                        document.removeEventListener('click', enableSoundOnce);
+                        document.removeEventListener('touchstart', enableSoundOnce);
+                    };
+                    document.addEventListener('click', enableSoundOnce, { once: true });
+                    document.addEventListener('touchstart', enableSoundOnce, { once: true });
+                } catch (autoplayErr) {
+                    console.log("Autoplay prevented, showing manual button", autoplayErr);
                     manualBtn.style.display = 'flex';
+                    // Manual play handler
                     const playHandler = async () => {
-                        await videoElement.play().catch(e=>console.log);
-                        manualBtn.style.display = 'none';
+                        try {
+                            await videoElement.play();
+                            manualBtn.style.display = 'none';
+                            if (videoElement.muted) {
+                                videoElement.muted = false;
+                                showToast("🔊 Sound enabled", 1500);
+                            }
+                        } catch (e) {
+                            showToast("Click again to play", 2000);
+                        }
                         manualBtn.removeEventListener('click', playHandler);
                     };
                     manualBtn.addEventListener('click', playHandler, { once: true });
                 }
-                showToast(`Now playing: ${channel.title}`);
-            } catch (err) {
-                console.error("Playback error:", err);
-                showToast(`Error: ${err.message || 'Cannot play channel'}`, 3000);
-            } finally {
+                
                 showLoader(false);
+                return true;
+                
+            } catch (err) {
+                console.error("fetchAndPlayChannelById error:", err);
+                let friendlyMsg = err.message || "Unknown error";
+                if (friendlyMsg.includes("Failed to fetch") || friendlyMsg.includes("HTTP")) {
+                    friendlyMsg = `Cannot load channels.json from "${CHANNELS_JSON_URL}". Verify file exists and is accessible.`;
+                }
+                showErrorPanel(friendlyMsg);
+                nowPlayingBadge.innerHTML = "⚠️ CHANNEL ERROR";
+                showLoader(false);
+                return false;
             }
         }
         
-        function renderChannelStrip(channels) {
-            const containerEl = document.getElementById('channelListContainer');
-            if (!channels.length) {
-                containerEl.innerHTML = `<div style="color:#aaa;">No channels loaded from external JSON</div>`;
+        // Also support playing fallback if no ID? According to requirement: only load and play channels accessed by id.
+        // If no id parameter -> show error panel gracefully.
+        async function bootstrap() {
+            // Hide error panel initially
+            hideErrorPanel();
+            
+            // Initialize Shaka player first (no channel loaded yet)
+            try {
+                await initShakaPlayer();
+            } catch (initErr) {
+                console.error("Shaka init failed", initErr);
+                showErrorPanel("Player engine failed to initialize: " + initErr.message);
+                nowPlayingBadge.innerHTML = "⚠️ PLAYER ERROR";
                 return;
             }
-            let html = '';
-            channels.forEach((ch, idx) => {
-                const activeClass = (currentChannelId === ch.id) ? 'active' : '';
-                html += `
-                    <div class="channel-card ${activeClass}" data-id="${ch.id}" data-url="${ch.url}" data-keyid="${ch.keyId}" data-key="${ch.key}" data-title="${ch.title}" data-img="${ch.image || ''}">
-                        <img class="channel-icon" src="${ch.image || 'https://via.placeholder.com/64?text=TV'}" onerror="this.src='https://via.placeholder.com/64?text=Channel'">
-                        <span class="channel-title">${ch.title.substring(0, 18)}</span>
-                    </div>
-                `;
-            });
-            containerEl.innerHTML = html;
-            // attach click listeners
-            document.querySelectorAll('.channel-card').forEach(card => {
-                card.addEventListener('click', async (e) => {
-                    const id = card.dataset.id;
-                    const channelObj = channelsMaster.find(c => c.id === id);
-                    if (channelObj) {
-                        // update active UI
-                        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-                        card.classList.add('active');
-                        await loadChannelById(channelObj);
+            
+            if (!requestedChannelId) {
+                // No id provided -> show clear error and stop (no channel loaded)
+                nowPlayingBadge.innerHTML = "❓ NO ID PARAMETER";
+                showErrorPanel("Missing 'id' parameter in URL. Use ?id=ZeeTv (example). No channel will be loaded.");
+                showLoader(false);
+                return;
+            }
+            
+            // Load the specific channel by ID (only that channel, no list UI)
+            await fetchAndPlayChannelById(requestedChannelId);
+        }
+        
+        // Additional user interaction: unmute on any click on player area
+        function setupGlobalUnmute() {
+            const wrapper = document.querySelector('.player-wrapper');
+            if (wrapper) {
+                wrapper.addEventListener('click', () => {
+                    if (videoElement && videoElement.muted) {
+                        videoElement.muted = false;
+                        showToast("🔊 Unmuted", 1000);
                     }
                 });
-            });
+            }
         }
         
-        async function bootstrap() {
-            const success = await loadChannelsFromExternal();
-            if (!success || channelsMaster.length === 0) {
-                document.getElementById('nowPlayingBadge').innerHTML = "❌ JSON MISSING";
-                return;
-            }
-            await initShakaAndUI();
-            renderChannelStrip(channelsMaster);
-            if (channelsMaster.length > 0) {
-                const firstChannel = channelsMaster[0];
-                currentChannelId = firstChannel.id;
-                await loadChannelById(firstChannel);
-                // highlight first card
-                const firstCard = document.querySelector('.channel-card');
-                if(firstCard) firstCard.classList.add('active');
-            }
-            // video auto-unmute on interaction
-            const enableSound = () => { if(videoElement) videoElement.muted = false; };
-            document.body.addEventListener('click', enableSound, { once: true });
-            document.body.addEventListener('touchstart', enableSound, { once: true });
-        }
+        // Start everything
+        bootstrap().catch(err => {
+            console.error("Bootstrap critical error:", err);
+            showErrorPanel("Critical startup error: " + err.message);
+        });
+        setupGlobalUnmute();
         
-        bootstrap().catch(err => console.error("Boot error", err));
+        // visibility change: attempt to resume if user comes back and video paused
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && videoElement && videoElement.paused && currentChannel) {
+                videoElement.play().catch(e => console.log("resume failed", e));
+            }
+        });
     })();
 </script>
 </body>
