@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon" href="https://cinearena.github.io/astro-jwplyr/faviconimg.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Cine Arena - Secure Stream</title>
+    <!-- Shaka Player with UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* avoid accidental selection */
+        }
+
+        html, body {
+            background: #000;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* main container */
+        .shaka-video-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            object-fit: contain;
+        }
+
+        /* YouTube-style theme alignment */
+        .youtube-theme {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .youtube-theme .shaka-bottom-controls {
+            width: 100%;
+            padding: 0;
+            padding-bottom: 0;
+            z-index: 1;
+        }
+
+        .youtube-theme .shaka-bottom-controls {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -ms-flex-direction: column;
+            flex-direction: column;
+        }
+
+        .youtube-theme .shaka-ad-controls {
+            -webkit-box-ordinal-group: 2;
+            -ms-flex-order: 1;
+            order: 1;
+        }
+
+        .youtube-theme .shaka-controls-button-panel {
+            -webkit-box-ordinal-group: 3;
+            -ms-flex-order: 2;
+            order: 2;
+            height: 40px;
+            padding: 0 10px;
+        }
+
+        .youtube-theme .shaka-range-container {
+            margin: 4px 10px 4px 10px;
+            top: 0;
+        }
+
+        .youtube-theme .shaka-small-play-button {
+            -webkit-box-ordinal-group: -2;
+            -ms-flex-order: -3;
+            order: -3;
+        }
+
+        .youtube-theme .shaka-mute-button {
+            -webkit-box-ordinal-group: -1;
+            -ms-flex-order: -2;
+            order: -2;
+        }
+
+        .youtube-theme .shaka-controls-button-panel > * {
+            margin: 0;
+            padding: 3px 8px;
+            color: #EEE;
+            height: 40px;
+        }
+
+        .youtube-theme .shaka-controls-button-panel > *:focus {
+            outline: none;
+            -webkit-box-shadow: inset 0 0 0 2px rgba(27, 127, 204, 0.8);
+            box-shadow: inset 0 0 0 2px rgba(27, 127, 204, 0.8);
+            color: #FFF;
+        }
+
+        .youtube-theme .shaka-controls-button-panel > *:hover {
+            color: #FFF;
+        }
+
+        .youtube-theme .shaka-controls-button-panel .shaka-volume-bar-container {
+            position: relative;
+            z-index: 10;
+            left: -1px;
+            -webkit-box-ordinal-group: 0;
+            -ms-flex-order: -1;
+            order: -1;
+            opacity: 0;
+            width: 0px;
+            -webkit-transition: width 0.2s cubic-bezier(0.4, 0, 1, 1);
+            height: 3px;
+            transition: width 0.2s cubic-bezier(0.4, 0, 1, 1);
+            padding: 0;
+        }
+
+        .youtube-theme .shaka-controls-button-panel .shaka-volume-bar-container:hover,
+        .youtube-theme .shaka-controls-button-panel .shaka-volume-bar-container:focus {
+            display: block;
+            width: 50px;
+            opacity: 1;
+            padding: 0 6px;
+        }
+
+        .youtube-theme .shaka-mute-button:hover + div {
+            opacity: 1;
+            width: 50px;
+            padding: 0 6px;
+        }
+
+        .youtube-theme .shaka-current-time {
+            padding: 0 10px;
+            font-size: 12px;
+        }
+
+        .youtube-theme .shaka-seek-bar-container {
+            height: 3px;
+            position: relative;
+            top: -1px;
+            border-radius: 0;
+            margin-bottom: 0;
+        }
+
+        .youtube-theme .shaka-seek-bar-container .shaka-range-element {
+            opacity: 0;
+        }
+
+        .youtube-theme .shaka-seek-bar-container:hover {
+            height: 5px;
+            top: 0;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-seek-bar-container:hover .shaka-range-element {
+            opacity: 1;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-seek-bar-container input[type=range]::-webkit-slider-thumb {
+            background: #FF0000;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-seek-bar-container input[type=range]::-moz-range-thumb {
+            background: #FF0000;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-seek-bar-container input[type=range]::-ms-thumb {
+            background: #FF0000;
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-video-container * {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .youtube-theme .shaka-video-container .material-icons-round {
+            font-family: 'Material Icons Sharp';
+        }
+
+        .youtube-theme .shaka-overflow-menu,
+        .youtube-theme .shaka-settings-menu {
+            border-radius: 2px;
+            background: rgba(28, 28, 28, 0.9);
+            text-shadow: 0 0 2px rgb(0 0 0%);
+            -webkit-transition: opacity 0.1s cubic-bezier(0, 0, 0.2, 1);
+            transition: opacity 0.1s cubic-bezier(0, 0, 0.2, 1);
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+            right: 10px;
+            bottom: 50px;
+            padding: 8px 0;
+            min-width: 200px;
+        }
+
+        .youtube-theme .shaka-settings-menu {
+            padding: 0 0 8px 0;
+        }
+
+        .youtube-theme .shaka-settings-menu button {
+            font-size: 12px;
+        }
+
+        .youtube-theme .shaka-settings-menu button span {
+            margin-left: 33px;
+            font-size: 13px;
+        }
+
+        .youtube-theme .shaka-settings-menu button[aria-selected="true"] {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+        }
+
+        .youtube-theme .shaka-settings-menu button[aria-selected="true"] span {
+            -webkit-box-ordinal-group: 3;
+            -ms-flex-order: 2;
+            order: 2;
+            margin-left: 0;
+        }
+
+        .youtube-theme .shaka-settings-menu button[aria-selected="true"] i {
+            -webkit-box-ordinal-group: 2;
+            -ms-flex-order: 1;
+            order: 1;
+            font-size: 18px;
+            padding-left: 5px;
+        }
+
+        .youtube-theme .shaka-overflow-menu button {
+            padding: 0;
+        }
+
+        .youtube-theme .shaka-overflow-menu button i {
+            display: none;
+        }
+
+        .youtube-theme .shaka-overflow-menu button .shaka-overflow-button-label {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: row;
+            flex-direction: row;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            cursor: default;
+            outline: none;
+            height: 40px;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+        }
+
+        .youtube-theme .shaka-overflow-menu button .shaka-overflow-button-label span {
+            -ms-flex-negative: initial;
+            flex-shrink: initial;
+            padding-left: 15px;
+            font-size: 13px;
+            font-weight: 500;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        .youtube-theme .shaka-overflow-menu span + span {
+            color: #FFF;
+            font-weight: 400 !important;
+            font-size: 12px !important;
+            padding-right: 8px;
+            padding-left: 0 !important;
+        }
+
+        .youtube-theme .shaka-overflow-menu span + span:after {
+            content: "navigate_next";
+            font-family: 'Material Icons Sharp';
+            font-size: 20px;
+        }
+
+        .youtube-theme .shaka-overflow-menu .shaka-pip-button span + span {
+            padding-right: 15px !important;
+        }
+
+        .youtube-theme .shaka-overflow-menu .shaka-pip-button span + span:after {
+            content: "";
+        }
+
+        .youtube-theme .shaka-back-to-overflow-button {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            color: #eee;
+            height: 40px;
+        }
+
+        .youtube-theme .shaka-back-to-overflow-button .material-icons-round {
+            font-size: 15px;
+            padding-right: 10px;
+        }
+
+        .youtube-theme .shaka-back-to-overflow-button span {
+            margin-left: 3px !important;
+        }
+
+        .youtube-theme .shaka-overflow-menu button:hover,
+        .youtube-theme .shaka-settings-menu button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-overflow-menu button:hover label,
+        .youtube-theme .shaka-settings-menu button:hover label {
+            cursor: pointer;
+        }
+
+        .youtube-theme .shaka-overflow-menu button:focus,
+        .youtube-theme .shaka-settings-menu button:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            outline: none;
+        }
+
+        .youtube-theme .shaka-overflow-menu button,
+        .youtube-theme .shaka-settings-menu button {
+            color: #EEE;
+        }
+
+        .youtube-theme .shaka-captions-off {
+            color: #BFBFBF;
+        }
+
+        .youtube-theme .shaka-overflow-menu-button {
+            font-size: 18px;
+            margin-right: 5px;
+        }
+
+        .youtube-theme .shaka-fullscreen-button:hover {
+            font-size: 25px;
+            -webkit-transition: font-size 0.1s cubic-bezier(0, 0, 0.2, 1);
+            transition: font-size 0.1s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        /* hide center loading spinner (clean look) */
+        .shaka-spinner-container,
+        .shaka-spinner,
+        .shaka-spinner-svg {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        /* Custom seek bar colors: YouTube red */
+        .youtube-theme .shaka-seek-bar {
+            background: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .youtube-theme .shaka-buffered-range {
+            background: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        .youtube-theme .shaka-played-range {
+            background: rgb(255, 0, 0) !important;
+        }
+
+        /* Logo and branding */
+        #myLogo {
+            width: 120px;
+            height: 40px;
+            position: absolute;
+            right: 5px;
+            top: 10px;
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+        }
+
+        #myLogo:hover {
+            opacity: 0.9;
+        }
+
+        .shaka-video-container,
+        video {
+            pointer-events: auto !important;
+        }
+        
+        /* optional small error toast style */
+        .error-toast {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            color: #ff9e5e;
+            padding: 10px 20px;
+            border-radius: 36px;
+            font-size: 14px;
+            z-index: 10000;
+            font-family: monospace;
+            pointer-events: none;
+            white-space: nowrap;
+            border-left: 3px solid #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="shaka-video-container youtube-theme" data-shaka-player>
+    <video autoplay muted playsinline preload="auto" poster="https://blogger.googleusercontent.com/img/a/AVvXsEiGqaZeRBZ6Y7yV5ZYSRiNRhBa5q9_EMx7R5TJcHd3XJwwHh2YhNOGt76Y4vEcUIjvIaA7W-Tw1RyMLP-4WZwVHA4mk18zwXl7HdSL5WabprIasDOWJO7jpL0zTQB4p_y7X0Rv0xwe-cJ-GvxofAgeRp2FIiNgB90n_b8Cqw0sAaZqVhJg_fi9UyfSO8KY"></video>
+    <a href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
+        <img id="myLogo" src="https://cricstream4u.github.io/cinearena/cineheader.png" alt="Cine Arena">
+    </a>
+</div>
+
+<script>
+    (function() {
+        // +++ SPECIFIC STREAM URL (as requested) +++
+        // The exact MPD + ClearKey parameters are embedded directly.
+        const STREAM_URL = "https://a151aivottlinear-a.akamaihd.net/OTTB/sin-nitro/live/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd?drmScheme=clearkey&drmLicense=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19";
+        
+        // Extract ClearKey info from the URL's query param "drmLicense" which is in format KID:KEY
+        // According to given URL: drmLicense=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19
+        // KID (keyId) = "1a5df53609ebc9857898c490f4724918"
+        // KEY (key)   = "77f62980d582ec541280796acf8b2d19"
+        const urlParams = new URL(STREAM_URL);
+        const drmLicenseParam = urlParams.searchParams.get('drmLicense');
+        let keyId = null;
+        let key = null;
+        
+        if (drmLicenseParam && drmLicenseParam.includes(':')) {
+            const parts = drmLicenseParam.split(':');
+            if (parts.length === 2) {
+                keyId = parts[0].trim();
+                key = parts[1].trim();
+            }
+        }
+        
+        // fallback safety if somehow param missing: use exact known values
+        if (!keyId || !key) {
+            keyId = "1a5df53609ebc9857898c490f4724918";
+            key = "77f62980d582ec541280796acf8b2d19";
+        }
+        
+        console.log(`[CineArena] Using ClearKey KID: ${keyId}, KEY: ${key.substring(0,8)}...`);
+        
+        // ClearKey DRM config for Shaka
+        const drmConfig = {
+            clearKeys: {
+                [keyId]: key
+            },
+            // Force clearkey as preferred scheme
+            advanced: {
+                "com.widevine.alpha": {
+                    serverCertificate: null
+                }
+            }
+        };
+        
+        // Helper: remove any existing toast
+        let toastTimeout = null;
+        function showErrorToast(msg, duration = 5000) {
+            const existing = document.querySelector('.error-toast');
+            if (existing) existing.remove();
+            const div = document.createElement('div');
+            div.className = 'error-toast';
+            div.innerText = msg;
+            document.body.appendChild(div);
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                if (div && div.remove) div.remove();
+            }, duration);
+        }
+        
+        // Initialize Shaka Player
+        async function initPlayer() {
+            shaka.polyfill.installAll();
+            
+            if (!shaka.Player.isBrowserSupported()) {
+                console.error("[CineArena] Browser not supported for Shaka Player");
+                showErrorToast("Your browser does not support playback technology.", 8000);
+                return;
+            }
+            
+            const video = document.querySelector('video');
+            if (!video) {
+                console.error("Video element missing");
+                return;
+            }
+            
+            const player = new shaka.Player(video);
+            
+            // Attach UI overlay
+            const container = document.querySelector('.shaka-video-container');
+            const ui = new shaka.ui.Overlay(player, container, video);
+            
+            // UI configuration - youtube style elements
+            const uiConfig = {
+                controlPanelElements: [
+                    'play_pause',
+                    'time_and_duration',
+                    'mute',
+                    'volume',
+                    'spacer',
+                    'captions',
+                    'quality',
+                    'language',
+                    'picture_in_picture',
+                    'fullscreen',
+                    'overflow_menu'
+                ],
+                enableFullscreenOnRotation: true,
+                addSeekBar: true,
+                seekBarColors: {
+                    base: 'rgba(255,255,255,0.2)',
+                    buffered: 'rgba(255,255,255,0.4)',
+                    played: '#FF0000'
+                }
+            };
+            ui.configure(uiConfig);
+            
+            // Configure DRM and streaming optimization
+            player.configure({
+                drm: drmConfig,
+                streaming: {
+                    lowLatencyMode: true,
+                    bufferingGoal: 15,
+                    rebufferingGoal: 2,
+                    bufferBehind: 15,
+                    retryParameters: {
+                        timeout: 10000,
+                        maxAttempts: 5,
+                        baseDelay: 300,
+                        backoffFactor: 1.2
+                    },
+                    segmentRequestTimeout: 8000,
+                    segmentPrefetchLimit: 2,
+                    useNativeHlsOnSafari: true
+                },
+                manifest: {
+                    retryParameters: {
+                        timeout: 8000,
+                        maxAttempts: 3
+                    }
+                },
+                // ensure clearkey license is accepted
+                licenseRequestHeaders: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            // OPTIONAL: Add referer/headers if needed (some CDNs require)
+            player.getNetworkingEngine().registerRequestFilter((type, request) => {
+                // Add appropriate headers for Akamai / Jio-like endpoints
+                request.headers['Referer'] = 'https://www.jiotv.com/';
+                request.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+                // For any extra cookies if needed (optional)
+                // but keep clean
+                if (type === shaka.net.NetworkingEngine.RequestType.MANIFEST || 
+                    type === shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+                    // ensure no duplicate query, but fine.
+                }
+            });
+            
+            // Autoplay helpers
+            const attemptUnmutedPlay = async () => {
+                try {
+                    video.muted = false;
+                    await video.play();
+                    console.log("[CineArena] Unmuted autoplay succeeded");
+                    return true;
+                } catch (err) {
+                    console.warn("[CineArena] Unmuted play failed:", err.message);
+                    return false;
+                }
+            };
+            
+            const attemptMutedPlay = async () => {
+                try {
+                    video.muted = true;
+                    await video.play();
+                    console.log("[CineArena] Muted autoplay succeeded");
+                    return true;
+                } catch (err) {
+                    console.error("[CineArena] Muted autoplay failed:", err.message);
+                    return false;
+                }
+            };
+            
+            // Begin loading stream
+            try {
+                // Pre-configure video volume
+                video.volume = 0.8;
+                
+                // Load the manifest (the direct MPD URL)
+                await player.load(STREAM_URL);
+                console.log("[CineArena] Manifest loaded successfully");
+                
+                // attempt autoplay with gradual unmute policy
+                let played = false;
+                // if video ready enough, try unmuted first
+                if (video.readyState >= 2) {
+                    played = await attemptUnmutedPlay();
+                    if (!played) played = await attemptMutedPlay();
+                } else {
+                    // wait for canplay
+                    await new Promise(resolve => {
+                        const onCanPlay = () => {
+                            video.removeEventListener('canplay', onCanPlay);
+                            resolve();
+                        };
+                        video.addEventListener('canplay', onCanPlay, { once: true });
+                        setTimeout(resolve, 1500); // fallback after timeout
+                    });
+                    played = await attemptUnmutedPlay();
+                    if (!played) played = await attemptMutedPlay();
+                }
+                
+                if (!played) {
+                    console.log("[CineArena] Autoplay blocked by browser, waiting for user gesture");
+                    // optional: custom big play button? but user will tap on screen anyway 
+                    // because Shaka UI has play button; but we can also show subtle hint.
+                    // Add a one-time overlay hint? Use existing UI, it's fine.
+                }
+                
+                // After user interaction, unmute if muted by policy
+                const onUserInteraction = () => {
+                    if (video.muted) {
+                        video.muted = false;
+                        console.log("[CineArena] Sound enabled after user gesture");
+                    }
+                    document.removeEventListener('click', onUserInteraction);
+                    document.removeEventListener('touchstart', onUserInteraction);
+                    document.removeEventListener('keydown', onUserInteraction);
+                };
+                document.addEventListener('click', onUserInteraction, { once: true });
+                document.addEventListener('touchstart', onUserInteraction, { once: true });
+                document.addEventListener('keydown', onUserInteraction, { once: true });
+                
+            } catch (loadError) {
+                console.error("[CineArena] Failed to load stream:", loadError);
+                let errorMsg = "Playback initialization error. ";
+                if (loadError.message) errorMsg += loadError.message;
+                showErrorToast(errorMsg.substring(0, 100), 8000);
+                
+                // try fallback: reload after 2 sec? not needed but safe
+                setTimeout(() => {
+                    if (player && !player.isLive()) {
+                        player.load(STREAM_URL).catch(e => console.warn("retry failed", e));
+                    }
+                }, 3000);
+            }
+            
+            // error event listener
+            player.addEventListener('error', (event) => {
+                const errorDetail = event.detail;
+                console.error("[CineArena] Shaka error:", errorDetail);
+                let userMsg = "Stream error: ";
+                if (errorDetail && errorDetail.code) {
+                    userMsg += `code ${errorDetail.code}`;
+                    if (errorDetail.code === 6012) userMsg += " (DRM/ClearKey mismatch)";
+                    else if (errorDetail.code === 1001) userMsg += " (Network issue)";
+                } else {
+                    userMsg += "please check connection or try again later.";
+                }
+                showErrorToast(userMsg, 6000);
+            });
+            
+            // mobile fullscreen attempt on first play (optional)
+            video.addEventListener('play', () => {
+                if (window.innerWidth <= 768 && !document.fullscreenElement && window.self === window.top) {
+                    container.requestFullscreen().catch(() => {});
+                }
+            }, { once: true });
+            
+            // visibility resume: try to play if hidden -> visible and paused
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && video.paused && !video.ended) {
+                    video.play().catch(e => console.log("visibility autoplay blocked", e));
+                }
+            });
+            
+            // Also handle network recovery
+            window.addEventListener('online', () => {
+                if (video.paused && !video.ended && player.isLoaded()) {
+                    video.play().catch(e => console.log("online resume blocked", e));
+                } else if (!player.isLoaded()) {
+                    player.load(STREAM_URL).catch(e => console.warn("reload after online", e));
+                }
+            });
+        }
+        
+        // Start everything after DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPlayer);
+        } else {
+            initPlayer();
+        }
+    })();
+</script>
+</body>
+</html>
