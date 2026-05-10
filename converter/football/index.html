@@ -347,7 +347,7 @@
 <div class="app-wrapper">
     <div class="header-flex">
         <div class="logo">
-            <h1>⚡ FootyFeed</h1>
+            <h1>⚡ CineArena </h1>
         </div>
         <div class="live-badge">
             <span class="live-dot-pulse"></span> 1Live · LiveFootballStreams
@@ -543,7 +543,7 @@
         try {
             // FIRST: attempt to fetch from external "matches.json" (user-provided)
             // If file not exists, we fallback to the predefined dataset that matches exactly screenshot format 
-            const response = await fetch('./matches.json');
+            const response = await fetch('https://cinearena.fun/api/allinone.json');
             if (!response.ok) throw new Error('external json not found, using default dataset');
             const data = await response.json();
             // support { matches: [...] } or direct array
