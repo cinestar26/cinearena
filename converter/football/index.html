@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>CineArena | Live Sports Streaming</title>
+    <title>FootyFeed | Live Sports Streaming</title>
     <style>
         * {
             margin: 0;
@@ -347,14 +347,14 @@
 <div class="app-wrapper">
     <div class="header-flex">
         <div class="logo">
-            <h1>⚡ CineArena </h1>
+            <h1>⚡ FootyFeed</h1>
         </div>
         <div class="live-badge">
             <span class="live-dot-pulse"></span> 1Live · LiveFootballStreams
         </div>
     </div>
 
-    <!-- Hero banner exactly as screenshot -->
+    <!-- Hero banner -->
     <div class="hero-live">
         <div class="hero-text">
             <h2>Watch every match in real-time</h2>
@@ -371,11 +371,24 @@
     <!-- main matches grid -->
     <div id="matchesGrid" class="matches-grid"></div>
 
-    
+    <!-- sidebar -->
+    <div class="info-sidebar">
+        <div class="upcoming-panel">
+            <h3>📺 Upcoming / LIVE Countdown</h3>
+            <div id="upcomingList"></div>
+        </div>
+        <div class="upcoming-panel">
+            <h3>🏆 Featured Leagues</h3>
+            <div style="font-size:0.8rem; margin-top: 8px;">Cricket • IPL • EPL • LaLiga • Serie A</div>
+            <div style="margin-top: 18px; background:#0a0c16; border-radius: 20px; padding: 16px; text-align: center;">
+                <div>🎬 WILLOW [Ad-Free]</div>
+                <div style="font-size: 0.7rem; color:#8da3cf;">T1-D3, TEA BREAK. LIVE ACTION RESUMES SHORTLY</div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- MODAL POPUP PLAYER (with url wrapper: MPD & HLS) -->
+<!-- MODAL POPUP PLAYER - Direct player URL -->
 <div id="streamModal" class="modal-stream">
     <div class="modal-box">
         <div class="modal-header">
@@ -383,60 +396,61 @@
             <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
         <div class="iframe-container">
-            <iframe id="streamIframe" src="about:blank" allowfullscreen></iframe>
+            <iframe id="streamIframe" src="about:blank" allow="fullscreen; autoplay" allowfullscreen></iframe>
         </div>
         <div class="stream-footer" id="streamFooterMsg">
-            🎬 Stream loaded from external source • MPD/HLS wrapped
+            🎬 Loading stream...
         </div>
     </div>
 </div>
 
 <script>
-    // ------------------------------
-    // exact JSON structure (internal but we also support external fetch)
-    // we'll fetch from external JSON file (matches.json) exactly as format shown.
-    // The user can host a JSON file with same schema.
-    // For demo, we define a rich dataset that matches screenshot: CRICKET (BAN vs PAK) , IPL (CSK vs LSG), SERIE A (Verona vs Como)
-    // and categories: EPL, Eredivisie, F1, Indian Premier League, LaLiga2, etc.
-    // the player uses: for MPD => https://cinearena.fun/plyr/p1/?url= + encodedStreamUrl
-    // for HLS => https://cinearena.fun/ios/?url= + encodedStreamUrl
-    // -------------------------------------------------
-    
     let allMatches = [];
     let currentCategory = "All";
     
-    // Helper to build the stream proxy URL
-    function getStreamProxyUrl(streamSourceUrl, streamType) {
-        // streamType can be "mpd", "hls", "mp4", "m3u8"
-        const typeLower = (streamType || "").toLowerCase();
-        if (typeLower === "mpd" || streamSourceUrl.includes('.mpd')) {
-            return `https://cinearena.fun/plyr/p1/?url=${encodeURIComponent(streamSourceUrl)}`;
-        } else if (typeLower === "hls" || typeLower === "m3u8" || streamSourceUrl.includes('.m3u8')) {
-            return `https://cinearena.fun/ios/?url=${encodeURIComponent(streamSourceUrl)}`;
-        } else {
-            // fallback for generic video, treat as hls-compatible or direct mp4
-            return `https://cinearena.fun/ios/?url=${encodeURIComponent(streamSourceUrl)}`;
+    // ============================================================
+    // IMPORTANT: This function builds the player URL.
+    // It uses the sourceUrl directly from JSON (which already contains
+    // the full player URL with all parameters like ?url=...&keys=...)
+    // ============================================================
+    function getPlayerUrl(streamSourceUrl, streamType) {
+        // The sourceUrl from JSON already contains the complete player URL
+        // Example: "https://www.footyfeed.site/player/?url=https%3A%2F%2F...&keys=..."
+        // So we return it as-is. No decoding, no extra wrapping.
+        if (streamSourceUrl) {
+            return streamSourceUrl;
         }
+        
+        // Fallback only if sourceUrl is missing
+        return "https://www.footyfeed.site/player/?url=";
     }
     
-    // function to open modal with specific stream
+    // Open modal with the stream
     function openStreamModal(match, streamItem) {
         const modal = document.getElementById("streamModal");
         const iframe = document.getElementById("streamIframe");
         const modalTitle = document.getElementById("modalStreamTitle");
         const footerMsg = document.getElementById("streamFooterMsg");
         
+        // Get the source URL directly from JSON (already in player URL format)
         let rawUrl = streamItem.sourceUrl;
+        
         if (!rawUrl) {
-            // fallback demo url
-            rawUrl = streamItem.type === "mpd" ? "https://demo.cinearena.fun/sample.mpd" : "https://demo.cinearena.fun/sample.m3u8";
+            footerMsg.innerHTML = `❌ Error: No stream URL available for ${streamItem.name}`;
+            alert("Stream URL missing for this source.");
+            return;
         }
-        const streamType = streamItem.type || (rawUrl.includes('.mpd') ? 'mpd' : 'hls');
-        const finalProxyUrl = getStreamProxyUrl(rawUrl, streamType);
+        
+        // Use the URL directly - it already contains the full player link
+        const finalPlayerUrl = rawUrl;
         
         modalTitle.innerText = `${match.team1} vs ${match.team2} • ${streamItem.name}`;
-        iframe.src = finalProxyUrl;
-        footerMsg.innerHTML = `🔗 Stream: ${streamItem.name} (${streamType.toUpperCase()}) wrapped via proxy • source: ${rawUrl.substring(0, 70)}${rawUrl.length > 70 ? '...' : ''}`;
+        iframe.src = finalPlayerUrl;
+        
+        // Display info in footer (truncate for readability)
+        let displayUrl = finalPlayerUrl.length > 80 ? finalPlayerUrl.substring(0, 80) + "..." : finalPlayerUrl;
+        footerMsg.innerHTML = `🎬 Stream: ${streamItem.name}<br><span style="font-size:0.7rem; opacity:0.7;">${displayUrl}</span>`;
+        
         modal.classList.add("active");
     }
     
@@ -447,7 +461,7 @@
         if (iframe) iframe.src = "about:blank";
     }
     
-    // render matches grid
+    // Render matches grid
     function renderMatches(matches) {
         const container = document.getElementById("matchesGrid");
         if (!container) return;
@@ -462,22 +476,22 @@
             return `
                 <div class="match-card">
                     <div class="match-top">
-                        <span class="league-name">${match.league}</span>
+                        <span class="league-name">${escapeHtml(match.league)}</span>
                         ${isLive ? '<span class="live-tag">🔴 LIVE</span>' : '<span class="live-tag">UPCOMING</span>'}
                     </div>
                     <div class="teams-row">
-                        <div class="team-block"><span class="team-name">${match.team1}</span></div>
+                        <div class="team-block"><span class="team-name">${escapeHtml(match.team1)}</span></div>
                         <div class="vs-div">VS</div>
-                        <div class="team-block"><span class="team-name">${match.team2}</span></div>
+                        <div class="team-block"><span class="team-name">${escapeHtml(match.team2)}</span></div>
                     </div>
                     <div class="match-meta">
-                        <span>📅 ${match.date || "10 May"} • ${match.time || "TBD"}</span>
-                        <span class="countdown-timer">⏱️ ${countdownDisplay}</span>
+                        <span>📅 ${escapeHtml(match.date || "10 May")} • ${escapeHtml(match.time || "TBD")}</span>
+                        <span class="countdown-timer">⏱️ ${escapeHtml(countdownDisplay)}</span>
                     </div>
                     <div class="stream-btns" data-match-id="${match.id}">
                         ${match.streams.map((stream, idx) => `
-                            <button class="stream-btn ${stream.adfree ? 'adfree' : ''}" data-stream-index="${idx}" data-match-json='${JSON.stringify(match).replace(/'/g, "&#39;")}' data-stream-name="${stream.name.replace(/['"]/g, '')}">
-                                ${stream.adfree ? '✨' : '📺'} ${stream.name}
+                            <button class="stream-btn ${stream.adfree ? 'adfree' : ''}" data-stream-index="${idx}" data-match-json='${JSON.stringify(match).replace(/'/g, "&#39;")}'>
+                                ${stream.adfree ? '✨' : '📺'} ${escapeHtml(stream.name)}
                             </button>
                         `).join('')}
                     </div>
@@ -485,7 +499,7 @@
             `;
         }).join('');
         
-        // attach event listeners for all stream buttons (dynamic)
+        // Attach event listeners for all stream buttons
         document.querySelectorAll('.stream-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -503,7 +517,18 @@
         });
     }
     
-    // render upcoming sidebar
+    // Escape HTML to prevent XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // Render upcoming sidebar
     function renderUpcomingSidebar(matches) {
         const upcomingDiv = document.getElementById("upcomingList");
         if (!upcomingDiv) return;
@@ -514,70 +539,60 @@
         }
         upcomingDiv.innerHTML = upcomingMatches.map(m => `
             <div class="mini-match">
-                <div class="mini-league">${m.league}</div>
-                <div class="mini-teams">${m.team1} 🆚 ${m.team2}</div>
-                <div style="font-size:0.7rem; margin-top: 6px;">⏰ ${m.time} • ${m.countdown || m.date || "Today"}</div>
+                <div class="mini-league">${escapeHtml(m.league)}</div>
+                <div class="mini-teams">${escapeHtml(m.team1)} 🆚 ${escapeHtml(m.team2)}</div>
+                <div style="font-size:0.7rem; margin-top: 6px;">⏰ ${escapeHtml(m.time)} • ${escapeHtml(m.countdown || m.date || "Today")}</div>
             </div>
         `).join('');
     }
     
-    // render category pills + highlight
+    // Render category pills
     function renderCategories(categoriesArray) {
         const container = document.querySelector(".cat-list");
         if (!container) return;
         container.innerHTML = categoriesArray.map(cat => `
-            <button class="cat-btn ${currentCategory === cat ? 'active' : ''}" data-category="${cat}">${cat}</button>
+            <button class="cat-btn ${currentCategory === cat ? 'active' : ''}" data-category="${cat}">${escapeHtml(cat)}</button>
         `).join('');
         document.querySelectorAll('.cat-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 currentCategory = btn.getAttribute('data-category');
                 renderCategories(categoriesArray);
                 renderMatches(allMatches);
-                // category change doesn't affect upcoming sidebar but fine
+                renderUpcomingSidebar(allMatches);
             });
         });
     }
     
-    // Load data from external json (matches.json or any endpoint)
+    // Load data from external JSON
     async function loadMatchesFromJson() {
         try {
-            // FIRST: attempt to fetch from external "matches.json" (user-provided)
-            // If file not exists, we fallback to the predefined dataset that matches exactly screenshot format 
-            const response = await fetch('https://cinearena.fun/api/allinone.json');
-            if (!response.ok) throw new Error('external json not found, using default dataset');
+            // Load from your JSON file
+            const response = await fetch('./matches.json');
+            if (!response.ok) throw new Error('External JSON not found');
             const data = await response.json();
-            // support { matches: [...] } or direct array
             if (data.matches && Array.isArray(data.matches)) return data.matches;
             if (Array.isArray(data)) return data;
             return [];
         } catch (err) {
-            console.warn("using fallback internal dataset (exact screenshot style)", err);
-            // this dataset mirrors the screenshot: BAN vs PAK (Cricket), CSK vs LSG (IPL), Verona vs Como (Serie A IT)
-            // and categories exactly as shown: Indian Premier League, Cricket, Serie A IT, LaLiga, EPL etc
+            console.warn("Could not load matches.json, using fallback data", err);
+            // Fallback with the exact format you provided (sourceUrl as full player URL)
             return [
-                { id:1, league:"Cricket", category:"Cricket", team1:"BAN", team2:"PAK", date:"10 May", time:"09:30 am IST", live:true, countdown:"LIVE", streams:[{name:"WILLOW [Ad-Free] (MPD)", type:"mpd", sourceUrl:"https://stream.example/cricket/willow.mpd", adfree:true},{name:"PREMIER SPORTS (MPD)", type:"mpd", sourceUrl:"https://stream.example/cricket/premier.mpd"},{name:"FANCODE FHD (MPD)", type:"mpd", sourceUrl:"https://stream.example/cricket/fancode-fhd.mpd"},{name:"Willow HD (MPD)", type:"mpd", sourceUrl:"https://stream.example/cricket/willowhd.mpd"},{name:"FANCODE - SD (MPD)", type:"mpd", sourceUrl:"https://stream.example/cricket/fancode-sd.mpd"}] },
-                { id:2, league:"Indian Premier League", category:"Indian Premier League", team1:"CSK", team2:"LSG", date:"10 May", time:"03:30 pm IST", live:false, countdown:"MATCH STARTS IN 01 HRS 27 MIN", streams:[{name:"Star Sports HD (MPD)", type:"mpd", sourceUrl:"https://stream.example/ipl/starsports.mpd"},{name:"JioCinema (MPD)", type:"mpd", sourceUrl:"https://stream.example/ipl/jiocinema.mpd"}] },
-                { id:3, league:"Serie A IT", category:"Serie A IT", team1:"Verona", team2:"Como", date:"10 May", time:"04:00 pm IST", live:false, countdown:"MATCH STARTS IN 01 HRS 57 MIN", streams:[{name:"DAZN IT (MPD)", type:"mpd", sourceUrl:"https://stream.example/seriea/dazn.mpd"},{name:"Sky Sport (HLS)", type:"hls", sourceUrl:"https://stream.example/seriea/sky.m3u8"}] },
-                { id:4, league:"EPL", category:"EPL", team1:"Arsenal", team2:"Chelsea", date:"10 May", time:"17:30 BST", live:false, countdown:"02 HRS 10 MIN", streams:[{name:"NBC Sports (HLS)", type:"hls", sourceUrl:"https://stream.example/epl/nbc.m3u8"},{name:"Optus Sport (MPD)", type:"mpd", sourceUrl:"https://stream.example/epl/optus.mpd"}] },
-                { id:5, league:"LaLiga es", category:"LaLiga es", team1:"Barcelona", team2:"Atletico", date:"10 May", time:"21:00 CEST", live:false, countdown:"04 HRS 20 MIN", streams:[{name:"ESPN+ (HLS)", type:"hls", sourceUrl:"https://stream.example/laliga/espn.m3u8", adfree:true},{name:"LaLiga TV (MPD)", type:"mpd", sourceUrl:"https://stream.example/laliga/laligatv.mpd"}] },
-                { id:6, league:"Scottish Premiership", category:"Scottish Premiership", team1:"Celtic", team2:"Rangers", date:"10 May", time:"15:00 BST", live:false, countdown:"STARTS IN 00 HRS 45 MIN", streams:[{name:"Sky Sports (HLS)", type:"hls", sourceUrl:"https://stream.example/scottish/sky.m3u8"}] },
-                { id:7, league:"League Two", category:"League Two", team1:"Bradford", team2:"Stockport", date:"10 May", time:"15:00 BST", live:false, countdown:"02 HRS", streams:[{name:"iFollow (MPD)", type:"mpd", sourceUrl:"https://stream.example/league2/ifollow.mpd"}] },
-                { id:8, league:"F1", category:"F1", team1:"Verstappen", team2:"Hamilton", date:"10 May", time:"15:00 CEST", live:true, countdown:"RACE LIVE", streams:[{name:"F1 TV Pro (HLS)", type:"hls", sourceUrl:"https://stream.example/f1/f1tv.m3u8", adfree:true},{name:"Sky Sports F1 (MPD)", type:"mpd", sourceUrl:"https://stream.example/f1/skyf1.mpd"}] },
-                { id:9, league:"Pro League sa", category:"Pro League sa", team1:"Al Hilal", team2:"Al Nassr", date:"10 May", time:"19:00 AST", live:false, countdown:"03 HRS", streams:[{name:"SSC HD (MPD)", type:"mpd", sourceUrl:"https://stream.example/saudi/ssc.mpd"}] },
-                { id:10, league:"Eredivisie", category:"Eredivisie", team1:"Ajax", team2:"Feyenoord", date:"10 May", time:"14:30 CET", live:false, countdown:"01 HRS", streams:[{name:"ESPN NL (HLS)", type:"hls", sourceUrl:"https://stream.example/eredivisie/espn.m3u8"}] },
-                { id:11, league:"LaLiga 2", category:"LaLiga 2", team1:"Zaragoza", team2:"Sporting", date:"10 May", time:"18:30 CEST", live:false, countdown:"MATCH STARTS IN 02 HRS", streams:[{name:"LaLiga+ (MPD)", type:"mpd", sourceUrl:"https://stream.example/laliga2/plus.mpd"}] }
+                { id:1, league:"Cricket", category:"Cricket", team1:"BAN", team2:"PAK", date:"10 May", time:"09:30 am IST", live:true, countdown:"LIVE", streams:[
+                    {name:"WILLOW [Ad-Free] (MPD)", type:"mpd", sourceUrl:"https://www.footyfeed.site/player/?url=https%3A%2F%2Fotte.cache.aiv-cdn.net%2Fiad-nitro%2Flive%2Fclients%2Fdash%2Fenc%2Fdobtojl5yj%2Fout%2Fv1%2F55199f766e1a482fb2ac3eea129e3b71%2Fcenc.mpd&keys=2d32bd4f3fc167ecb264eae96fa6b42d%3A66646c6ddedaeef0e7d0815e0d92340a", adfree:true},
+                    {name:"PREMIER SPORTS (MPD)", type:"mpd", sourceUrl:"https://www.footyfeed.site/player/?url=https%3A%2F%2Fotte.cache.aiv-cdn.net%2Fiad-nitro%2Flive%2Fclients%2Fdash%2Fenc%2Fbcj3iscpd6%2Fout%2Fv1%2Ffcd137b391214f7cb99dd4d7be90ca87%2Fcenc.mpd&keys=1a5df53609ebc9857898c490f4724918%3A77f62980d582ec541280796acf8b2d19", adfree:true}
+                ]}
             ];
         }
     }
     
-    // init categories from matches
+    // Build category list
     function buildCategoryList(matches) {
         const cats = new Set(matches.map(m => m.category).filter(Boolean));
         const sorted = Array.from(cats).sort((a,b)=>a.localeCompare(b));
         return ["All", ...sorted];
     }
     
-    // update UI with fresh data
+    // Initialize dashboard
     async function initDashboard() {
         const matchesArray = await loadMatchesFromJson();
         allMatches = matchesArray;
@@ -586,7 +601,8 @@
         renderCategories(categories);
         renderMatches(allMatches);
         renderUpcomingSidebar(allMatches);
-        // attach close modal
+        
+        // Close modal on backdrop click or close button
         document.getElementById("closeModalBtn")?.addEventListener("click", closeModal);
         window.addEventListener("click", (e) => {
             const modal = document.getElementById("streamModal");
