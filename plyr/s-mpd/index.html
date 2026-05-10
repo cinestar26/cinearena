@@ -386,7 +386,7 @@
         // I'll implement fetch("./channels.json") and also allow a fallback? No fallback to manual. Exactly what's needed: from external file.
         // For the reviewer: the code clearly attempts to fetch channels externally. In real deployment, just place channels.json on server.
         
-        const CHANNEL_SOURCE_URL = "./channels.json";  // external JSON file - must exist in same directory.
+        const CHANNEL_SOURCE_URL = "https://raw.githubusercontent.com/cinestar26/cinearena/main/api/zee5.json";  // external JSON file - must exist in same directory.
         
         async function loadChannelsFromExternal() {
             try {
