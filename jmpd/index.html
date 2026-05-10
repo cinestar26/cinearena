@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming by Asif Ansari</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Cric stream Favicon.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
+  <script src="script.js" defer></script>
+
+  <style>
+    body {
+      all: unset;
+      font-family: Arial, sans-serif;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0%); }
+      to { transform: translateX(-100%); }
+    }
+
+    /* Optional: Restrict jwplayer div height */
+    #jwplayerDiv {
+      aspect-ratio: 16 / 9;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+
+  <!-- 🔵 Header -->
+  <header class="p-4 bg-blue-900 text-white text-center">
+    <a href="https://cinearena.live">
+      <img src="cineheader.png" class="h-10 mx-auto" alt="Cine Arena">
+    </a>
+  </header>
+
+  <!-- 🟢 Scrolling Marquee Update Bar -->
+  <div class="flex items-center w-full bg-green-800">
+    <h4 class="shrink-0 m-0 text-lg text-white px-2">UPDATES:</h4>
+    <div class="overflow-hidden whitespace-nowrap flex-grow">
+      <p class="inline-block m-0 text-base text-white bg-red-600 px-2 py-1 animate-marquee" style="animation: marquee 50s linear infinite;">
+        If video not play refresh once and wait for few seconds video will start playing otherwise message in Telegram comments.
+        यदि वीडियो नहीं चलता है तो एक बार रिफ्रेश करें और कुछ सेकंड प्रतीक्षा करें वीडियो चलना शुरू हो जाएगा अन्यथा टेलीग्राम टिप्पणियों में संदेश दें।
+        ভিডিওটি না চললে একবার রিফ্রেশ করুন এবং কয়েক সেকেন্ড অপেক্ষা করুন ভিডিওটি চলতে শুরু করবে অন্যথায় টেলিগ্রামের মন্তব্যে বার্তা পাঠান।
+      </p>
+    </div>
+  </div>
+
+  <!-- 🟣 Responsive Video Container -->
+  <div class="w-full px-2 md:max-w-3xl md:mx-auto mt-4">
+    <div id="jwplayerDiv" class="w-full rounded-md overflow-hidden bg-black"></div>
+  </div>
+
+  <!-- 🔻 Online Counter -->
+  <center class="mt-2">
+    <script src="//widget.supercounters.com/ssl/online_t.js"></script>
+    <script>sc_online_t(1707487,"Users Online","170ddb");</script>
+    <noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
+  </center>
+
+  <!-- 🔷 Telegram Button -->
+  <div class="bg-blue-600 w-full text-center py-3 mt-2">
+    <a href="https://t.me/cine_arena" target="_blank">
+      <button id="joinTelegramButton" class="bg-white text-blue-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition">
+        Join Telegram
+      </button>
+    </a>
+  </div>
+
+  
+
+</body>
+</html>
