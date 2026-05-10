@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>FootyFeed</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.6/controls.min.css" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.6/shaka-player.ui.min.js" crossorigin="anonymous"></script>
+<script src="https://pl28910357.profitablecpmratenetwork.com/69/7a/39/697a39f00b158f4ef666f495ce31eb49.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Hide Shaka spinner */
+.shaka-spinner-container {
+  display: none !important;
+}
+
+/* Video container */
+[data-shaka-player-container] {
+  position: absolute;
+  inset: 0;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+}
+</style>
+</head>
+
+<body>
+
+<div data-shaka-player-container>
+  <video autoplay playsinline data-shaka-player id="video" style="width:100%;height:100%;"></video>
+</div>
+
+<script>
+// Function to get URL parameters
+function getUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    mpd: params.get('url'),
+    keys: params.get('keys')
+  };
+}
+
+// Initialize player immediately
+async function initPlayer() {
+  const video = document.getElementById("video");
+  
+  // Wait for Shaka UI to load
+  if (!video.ui) {
+    setTimeout(initPlayer, 100);
+    return;
+  }
+  
+  const ui = video.ui;
+  const controls = ui.getControls();
+  const player = controls.getPlayer();
+
+  // Get URL parameters
+  const urlParams = getUrlParams();
+  
+  // Default values (used when no URL parameters provided)
+  let clearKeys = {"baafdb8ebcbbc0655332291da6f121da":"60ac892e0ea0b2c46fc6837c97ed641a"};
+  let mpdUrl = "https://otte.live.fly.wvv.aiv-cdn.net/sin-nitro/live/dash/enc/0r0djhe3iq/out/v1/adc4f984bb244252b29bd96adb6a7b44/cenc.mpd";
+  
+  // Parse keys from URL if provided
+  if (urlParams.keys) {
+    try {
+      const keyParts = urlParams.keys.split(':');
+      if (keyParts.length === 2) {
+        clearKeys = {};
+        clearKeys[keyParts[0]] = keyParts[1];
+        console.log('Using keys from URL:', clearKeys);
+      }
+    } catch (e) {
+      console.error('Error parsing keys:', e);
+    }
+  }
+  
+  // Use MPD URL from parameter if provided
+  if (urlParams.mpd) {
+    try {
+      mpdUrl = decodeURIComponent(urlParams.mpd);
+      console.log('Using MPD from URL:', mpdUrl);
+    } catch (e) {
+      console.error('Error parsing MPD URL:', e);
+    }
+  }
+
+  // Configure DRM
+  player.configure({
+    drm: {
+      clearKeys: clearKeys
+    }
+  });
+
+  // Configure UI controls
+  ui.configure({
+    controlPanelElements: [
+      "play_pause","mute","volume","spacer",
+      "time_and_duration","quality","fullscreen","overflow_menu"
+    ]
+  });
+
+  try {
+    // Load the stream
+    await player.load(mpdUrl);
+    console.log('Stream loaded successfully');
+  } catch (e) {
+    console.error('Error loading stream:', e);
+  }
+}
+
+// Start player when Shaka UI is loaded
+document.addEventListener("shaka-ui-loaded", initPlayer);
+
+// Prevent screen sleep on mobile
+if ('wakeLock' in navigator) {
+  let wakeLock = null;
+  const requestWakeLock = async () => {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+    } catch (err) {
+      console.log('Wake Lock error:', err);
+    }
+  };
+  requestWakeLock();
+}
+
+// Telegram prompt
+window.addEventListener("load", function () {
+  if (window.confirm("Join @Cine_Arena for more live links?")) {
+    window.location.href = "https://t.me/cine_arena";
+  }
+});
+</script>
+
+</body>
+</html>
