@@ -1,0 +1,307 @@
+{
+  "matches": [
+    {
+      "id": 1,
+      "league": "Cricket",
+      "category": "Cricket",
+      "team1": "BAN",
+      "team2": "PAK",
+      "date": "10 May",
+      "time": "09:30 am IST",
+      "live": true,
+      "countdown": "LIVE",
+      "streams": [
+        {
+          "name": "WILLOW [Ad-Free] (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https%3A%2F%2Fotte.cache.aiv-cdn.net%2Fiad-nitro%2Flive%2Fclients%2Fdash%2Fenc%2Fdobtojl5yj%2Fout%2Fv1%2F55199f766e1a482fb2ac3eea129e3b71%2Fcenc.mpd&keys=2d32bd4f3fc167ecb264eae96fa6b42d%3A66646c6ddedaeef0e7d0815e0d92340a",
+          "adfree": true,
+          "quality": "HD"
+        },
+        {
+          "name": "PREMIER SPORTS (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https%3A%2F%2Fotte.cache.aiv-cdn.net%2Fiad-nitro%2Flive%2Fclients%2Fdash%2Fenc%2Fbcj3iscpd6%2Fout%2Fv1%2Ffcd137b391214f7cb99dd4d7be90ca87%2Fcenc.mpd&keys=1a5df53609ebc9857898c490f4724918%3A77f62980d582ec541280796acf8b2d19",
+          "adfree": true,
+          "quality": "HD"
+        },
+        {
+          "name": "FANCODE FHD (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/streams/fancode-fhd.mpd",
+          "adfree": false
+        },
+        {
+          "name": "Willow HD (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/streams/willow-hd.mpd",
+          "adfree": false
+        },
+        {
+          "name": "FANCODE - SD (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/streams/fancode-sd.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "league": "Indian Premier League",
+      "category": "Indian Premier League",
+      "team1": "CSK",
+      "team2": "LSG",
+      "date": "10 May",
+      "time": "03:30 pm IST",
+      "live": false,
+      "countdown": "MATCH STARTS IN 01 HRS 27 MIN",
+      "streams": [
+        {
+          "name": "Star Sports HD (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/ipl/starsports.mpd",
+          "adfree": false
+        },
+        {
+          "name": "JioCinema (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/ipl/jiocinema.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "league": "Serie A IT",
+      "category": "Serie A IT",
+      "team1": "Verona",
+      "team2": "Como",
+      "date": "10 May",
+      "time": "04:00 pm IST",
+      "live": false,
+      "countdown": "MATCH STARTS IN 01 HRS 57 MIN",
+      "streams": [
+        {
+          "name": "DAZN IT (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/seriea/dazn.mpd",
+          "adfree": false
+        },
+        {
+          "name": "Sky Sport (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/seriea/sky.m3u8",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "league": "EPL",
+      "category": "EPL",
+      "team1": "Arsenal",
+      "team2": "Chelsea",
+      "date": "10 May",
+      "time": "17:30 BST",
+      "live": false,
+      "countdown": "02 HRS 10 MIN",
+      "streams": [
+        {
+          "name": "NBC Sports (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/epl/nbc.m3u8",
+          "adfree": false
+        },
+        {
+          "name": "Optus Sport (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/epl/optus.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "league": "LaLiga es",
+      "category": "LaLiga es",
+      "team1": "Barcelona",
+      "team2": "Atletico Madrid",
+      "date": "10 May",
+      "time": "21:00 CEST",
+      "live": false,
+      "countdown": "04 HRS 20 MIN",
+      "streams": [
+        {
+          "name": "ESPN+ (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/laliga/espn.m3u8",
+          "adfree": true
+        },
+        {
+          "name": "LaLiga TV (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/laliga/laligatv.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "league": "Scottish Premiership",
+      "category": "Scottish Premiership",
+      "team1": "Celtic",
+      "team2": "Rangers",
+      "date": "10 May",
+      "time": "15:00 BST",
+      "live": false,
+      "countdown": "STARTS IN 00 HRS 45 MIN",
+      "streams": [
+        {
+          "name": "Sky Sports (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/scottish/sky.m3u8",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "league": "League Two",
+      "category": "League Two",
+      "team1": "Bradford City",
+      "team2": "Stockport",
+      "date": "10 May",
+      "time": "15:00 BST",
+      "live": false,
+      "countdown": "02 HRS",
+      "streams": [
+        {
+          "name": "iFollow (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/league2/ifollow.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "league": "F1",
+      "category": "F1",
+      "team1": "Verstappen",
+      "team2": "Hamilton",
+      "date": "10 May",
+      "time": "15:00 CEST",
+      "live": true,
+      "countdown": "RACE LIVE",
+      "streams": [
+        {
+          "name": "F1 TV Pro (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/f1/f1tv.m3u8",
+          "adfree": true
+        },
+        {
+          "name": "Sky Sports F1 (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/f1/skyf1.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "league": "Pro League sa",
+      "category": "Pro League sa",
+      "team1": "Al Hilal",
+      "team2": "Al Nassr",
+      "date": "10 May",
+      "time": "19:00 AST",
+      "live": false,
+      "countdown": "03 HRS",
+      "streams": [
+        {
+          "name": "SSC HD (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/saudi/ssc.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "league": "Eredivisie",
+      "category": "Eredivisie",
+      "team1": "Ajax",
+      "team2": "Feyenoord",
+      "date": "10 May",
+      "time": "14:30 CET",
+      "live": false,
+      "countdown": "01 HRS",
+      "streams": [
+        {
+          "name": "ESPN NL (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/eredivisie/espn.m3u8",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "league": "LaLiga 2",
+      "category": "LaLiga 2",
+      "team1": "Real Zaragoza",
+      "team2": "Sporting Gijon",
+      "date": "10 May",
+      "time": "18:30 CEST",
+      "live": false,
+      "countdown": "MATCH STARTS IN 02 HRS",
+      "streams": [
+        {
+          "name": "LaLiga+ (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/laliga2/plus.mpd",
+          "adfree": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "league": "WWE",
+      "category": "WWE",
+      "team1": "RAW",
+      "team2": "SmackDown",
+      "date": "11 May",
+      "time": "01:00 AM",
+      "live": false,
+      "countdown": "TOMORROW",
+      "streams": [
+        {
+          "name": "WWE Network (HLS)",
+          "type": "hls",
+          "sourceUrl": "https://example.com/wwe/network.m3u8",
+          "adfree": true
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "league": "Liga Portugal",
+      "category": "Liga Portugal",
+      "team1": "Benfica",
+      "team2": "Porto",
+      "date": "10 May",
+      "time": "20:15 WEST",
+      "live": false,
+      "countdown": "02 HRS 45 MIN",
+      "streams": [
+        {
+          "name": "Sport TV (MPD)",
+          "type": "mpd",
+          "sourceUrl": "https://example.com/portugal/sporttv.mpd",
+          "adfree": false
+        }
+      ]
+    }
+  ]
+}
