@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Stream URL Encoder · Cine Arena Tool</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Cric stream Favicon.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f1f5f9;
+    }
+    .card-gradient {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    }
+    .copy-btn:active {
+      transform: scale(0.96);
+    }
+    .url-preview {
+      word-break: break-all;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+    }
+    @keyframes fadePulse {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+    .toast-message {
+      animation: fadePulse 0.2s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-slate-100 to-slate-200 min-h-screen">
+
+  <!-- main container -->
+  <div class="max-w-4xl mx-auto px-4 py-6 md:py-10">
+    
+    <!-- header with logo style -->
+    <div class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 bg-blue-900/10 backdrop-blur-sm px-5 py-2 rounded-full">
+        <span class="text-2xl">🔐</span>
+        <span class="font-bold text-blue-900 tracking-wide">STREAM LINK ENCODER</span>
+      </div>
+      <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 mt-4">Convert to URL‑encoded format</h1>
+      <p class="text-slate-500 text-sm mt-1">Paste any DRM-protected DASH link → get encoded player-ready URL</p>
+    </div>
+
+    <!-- main card -->
+    <div class="card-gradient rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
+      
+      <!-- input area -->
+      <div class="p-5 md:p-7">
+        <label class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m3.172-3.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102"></path></svg>
+          Original streaming URL (full DASH + DRM)
+        </label>
+        <div class="relative">
+          <textarea id="rawUrlInput" rows="3" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm font-mono text-sm resize-y" placeholder="Paste your streaming link here...&#10;Example:&#10;https://a151aivottlinear-a.akamaihd.net/OTTB/sin-nitro/live/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd?|drmScheme=clearkey&amp;drmLicense=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19"></textarea>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4 justify-between items-center">
+          <div class="flex gap-2">
+            <button id="encodeBtn" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-5 py-2 rounded-xl shadow-md transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Encode & Generate
+            </button>
+            <button id="exampleBtn" class="border border-slate-400 bg-white hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-xl transition shadow-sm">
+              Load example
+            </button>
+            <button id="clearBtn" class="text-slate-500 hover:text-red-600 px-3 py-2 rounded-xl transition">
+              Clear
+            </button>
+          </div>
+          <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Supports ClearKey · DASH</span>
+        </div>
+      </div>
+
+      <!-- encoded output section -->
+      <div class="bg-slate-50 border-t border-slate-200 px-5 md:px-7 py-5">
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+          <label class="text-sm font-semibold text-slate-800 flex items-center gap-1">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Encoded URL (ready for player)
+          </label>
+          <div class="flex gap-2">
+            <button id="copyBtn" class="copy-btn text-xs bg-white border border-slate-300 hover:bg-emerald-50 hover:border-emerald-400 transition px-3 py-1.5 rounded-lg flex items-center gap-1 font-medium">
+              📋 Copy URL
+            </button>
+            <button id="testPlayerBtn" class="text-xs bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+              ▶️ Test in player
+            </button>
+          </div>
+        </div>
+        <div id="encodedOutput" class="bg-white border border-slate-200 rounded-xl p-4 shadow-inner text-sm url-preview text-slate-700 min-h-[90px] overflow-auto">
+          <span class="text-slate-400 italic">No encoded link yet — paste a valid stream URL and click "Encode & Generate".</span>
+        </div>
+        <div class="mt-3 text-xs text-slate-500 flex gap-3 flex-wrap">
+          <span>📌 Output format: <code class="bg-slate-200 px-1 rounded">https://yourdomain.com/?[encoded_params]</code></span>
+          <span>🔑 Auto-extracts MPD + DRM keys</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- info panel: how it works -->
+    <div class="mt-8 bg-white/70 backdrop-blur-sm rounded-xl border border-slate-200 p-5 text-sm text-slate-600 shadow-sm">
+      <div class="flex items-start gap-3">
+        <div class="text-blue-500 text-xl">⚡</div>
+        <div>
+          <h3 class="font-bold text-slate-800">Conversion logic (original → encoded)</h3>
+          <p class="mt-1">The tool extracts the <strong>DASH manifest URL (.mpd)</strong> and the <strong>ClearKey DRM parameters</strong> (drmScheme & license) from your input. Then it builds a URL-safe encoded string exactly like: </p>
+          <code class="block mt-2 bg-slate-100 p-2 rounded text-xs border-l-4 border-blue-500 break-all">https%3A%2F%2Fstreaming.cdn...cenc.mpd&keys=keyId%3AencryptionKey</code>
+          <p class="mt-2">The final result is a fully percent-encoded parameter ready to append to your player endpoint (Shaka/JW compatible).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- hidden toast element -->
+  <div id="toastMsg" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-2.5 rounded-full shadow-lg text-sm font-medium z-50 transition-all duration-300 opacity-0 pointer-events-none"></div>
+
+  <script>
+    (function() {
+      // DOM elements
+      const rawInput = document.getElementById('rawUrlInput');
+      const encodeBtn = document.getElementById('encodeBtn');
+      const exampleBtn = document.getElementById('exampleBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const testPlayerBtn = document.getElementById('testPlayerBtn');
+      const encodedOutputDiv = document.getElementById('encodedOutput');
+
+      // Helper: show floating message
+      function showToast(message, isError = false) {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = message;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        toast.classList.add('opacity-100');
+        if (isError) {
+          toast.style.backgroundColor = '#b91c1c';
+        } else {
+          toast.style.backgroundColor = '#1e293b';
+        }
+        setTimeout(() => {
+          toast.classList.remove('opacity-100');
+          toast.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => {
+            if (!isError) toast.style.backgroundColor = '#1e293b';
+            else toast.style.backgroundColor = '';
+          }, 300);
+        }, 2600);
+      }
+
+      // core: parse raw stream URL and return { mpdUrl, drmScheme, keyId, key }
+      function parseStreamUrl(fullUrl) {
+        if (!fullUrl || typeof fullUrl !== 'string') return null;
+        let cleanInput = fullUrl.trim();
+        if (cleanInput === "") return null;
+
+        // 1. extract MPD base URL (the part before query/hash that includes .mpd)
+        let mpdBase = "";
+        let queryPart = "";
+        let hashPart = "";
+        
+        try {
+          // use URL constructor for robust splitting
+          const urlObj = new URL(cleanInput);
+          mpdBase = urlObj.origin + urlObj.pathname;
+          queryPart = urlObj.search;      // includes '?'
+          hashPart = urlObj.hash;
+        } catch (e) {
+          // fallback for malformed but still potentially valid URL string
+          const mpdMatch = cleanInput.match(/(https?:\/\/[^\s?#]+\.mpd)/i);
+          if (mpdMatch) {
+            mpdBase = mpdMatch[1];
+            const afterMpd = cleanInput.substring(mpdBase.length);
+            const queryIndex = afterMpd.indexOf('?');
+            if (queryIndex !== -1) {
+              queryPart = afterMpd.substring(queryIndex);
+            } else if (afterMpd.includes('|')) {
+              // custom pipe notation appears after mpd
+              const pipeIdx = afterMpd.indexOf('|');
+              if (pipeIdx !== -1) queryPart = '?' + afterMpd.substring(pipeIdx + 1);
+              else queryPart = afterMpd;
+            } else {
+              queryPart = afterMpd;
+            }
+          } else {
+            // no .mpd found?  maybe the whole url is just the mpd but no extension?
+            return null;
+          }
+        }
+        
+        let drmRaw = "";
+        let drmScheme = "clearkey";
+        let keyId = "";
+        let key = "";
+        
+        // combine queryPart and also search inside pipe-style without '?'
+        let fullParams = "";
+        if (queryPart.startsWith('?')) fullParams = queryPart.substring(1);
+        else fullParams = queryPart;
+        
+        // if there is a pipe '|' after .mpd but before any query, handle manually
+        if (!fullParams && cleanInput.includes('|')) {
+          const pipeIndex = cleanInput.indexOf('|');
+          if (pipeIndex !== -1 && cleanInput.indexOf('.mpd') < pipeIndex) {
+            fullParams = cleanInput.substring(pipeIndex + 1);
+          }
+        }
+        
+        // search for drmScheme and drmLicense using regex or URLSearchParams
+        let drmLicenseRaw = "";
+        if (fullParams) {
+          // try to parse as URLSearchParams (if it has proper & format)
+          try {
+            const sp = new URLSearchParams(fullParams);
+            if (sp.has('drmScheme')) drmScheme = sp.get('drmScheme');
+            if (sp.has('drmLicense')) drmLicenseRaw = sp.get('drmLicense');
+          } catch(e) { /* ignore */ }
+          
+          // manual fallback
+          if (!drmLicenseRaw) {
+            const licMatch = fullParams.match(/drmLicense=([^&]+)/i);
+            if (licMatch) drmLicenseRaw = decodeURIComponent(licMatch[1]);
+            const schemeMatch = fullParams.match(/drmScheme=([^&]+)/i);
+            if (schemeMatch) drmScheme = decodeURIComponent(schemeMatch[1]);
+          }
+        }
+        
+        // also support pipe notation inside the raw part: drmLicense=keyId:key
+        if (!drmLicenseRaw && cleanInput.includes('drmLicense=')) {
+          const regexLic = /drmLicense=([^&|]+)/i;
+          const match = cleanInput.match(regexLic);
+          if (match) drmLicenseRaw = match[1];
+        }
+        
+        // final extraction: keyId & key from drmLicenseRaw (expect format keyId:key)
+        if (drmLicenseRaw) {
+          let cleanedLic = drmLicenseRaw;
+          if (cleanedLic.includes('%3A')) cleanedLic = decodeURIComponent(cleanedLic);
+          const colonIndex = cleanedLic.indexOf(':');
+          if (colonIndex !== -1) {
+            keyId = cleanedLic.substring(0, colonIndex);
+            key = cleanedLic.substring(colonIndex + 1);
+          } else {
+            // maybe it's just key? invalid, but we ignore
+            keyId = "";
+            key = "";
+          }
+        }
+        
+        // if we still don't have a valid keyId, try to scrape direct "keyId:key" pattern after drmLicense
+        if (!keyId || !key) {
+          const combinedPattern = /drmLicense=([a-fA-F0-9]+):([a-fA-F0-9]+)/i;
+          const directMatch = cleanInput.match(combinedPattern);
+          if (directMatch) {
+            keyId = directMatch[1];
+            key = directMatch[2];
+          }
+        }
+        
+        // edge: sometimes keyId might have dashes, but keep as is
+        if (!mpdBase || (!keyId && !key)) {
+          // allow just mpd without keys? not typical but maybe
+          if (mpdBase && mpdBase.includes('.mpd')) {
+            return { mpdUrl: mpdBase, drmScheme: "clearkey", keyId: "", key: "" };
+          }
+          return null;
+        }
+        
+        // clean trailing/leading spaces
+        keyId = keyId.trim();
+        key = key.trim();
+        
+        return {
+          mpdUrl: mpdBase,
+          drmScheme: drmScheme.toLowerCase(),
+          keyId: keyId,
+          key: key
+        };
+      }
+      
+      // build final output: full encoded query string like "https%3A%2F%2F...cenc.mpd&keys=..."
+      function buildEncodedString(mpdUrl, keyId, key) {
+        // target format: encoded MPD + "&keys=keyId%3Akey"
+        if (!mpdUrl) return "";
+        const encodedMpd = encodeURIComponent(mpdUrl);
+        let keysParam = "";
+        if (keyId && key) {
+          const rawKeys = `${keyId}:${key}`;
+          const encodedKeys = encodeURIComponent(rawKeys);
+          keysParam = `&keys=${encodedKeys}`;
+        }
+        // also include drmScheme for consistency (clearkey)
+        const drmParam = `&drmScheme=clearkey`;
+        const finalEncodedParams = `${encodedMpd}${drmParam}${keysParam}`;
+        // The player endpoint base: we use a placeholder but absolute URL for testing? We'll output full encoded string that can be appended to any player base.
+        // but to match user requirement: "https%3A%2F%2Fotte.cache....cenc.mpd&keys=..."
+        return finalEncodedParams;
+      }
+      
+      // generate full preview URL (like what user expects: encoded parameter value)
+      function generateFullEncodedOutput(mpdUrl, keyId, key) {
+        if (!mpdUrl) return "";
+        const encodedSegment = buildEncodedString(mpdUrl, keyId, key);
+        // if additional drmScheme needed, we already added. For demo, we can show full encoded param.
+        // To exactly match description: "https%3A%2F%2Fotte.cache...cenc.mpd&keys=..."
+        return encodedSegment;
+      }
+      
+      // render output and return generated string
+      function processAndRender(inputUrl) {
+        if (!inputUrl || inputUrl.trim() === "") {
+          encodedOutputDiv.innerHTML = `<span class="text-slate-400 italic">⚠️ Please paste a valid streaming URL with .mpd and drmLicense.</span>`;
+          return null;
+        }
+        
+        const parsed = parseStreamUrl(inputUrl);
+        if (!parsed || !parsed.mpdUrl) {
+          encodedOutputDiv.innerHTML = `<span class="text-red-500 bg-red-50 p-2 block rounded">❌ Invalid stream URL. Could not extract MPD manifest or DRM keys.<br><span class="text-xs">Make sure the URL contains “.mpd” and “drmLicense=keyId:key”.</span></span>`;
+          return null;
+        }
+        
+        const { mpdUrl, keyId, key, drmScheme } = parsed;
+        if (!keyId || !key) {
+          // show warning but still process partial
+          const encodedPartial = buildEncodedString(mpdUrl, "", "");
+          encodedOutputDiv.innerHTML = `<div class="text-amber-700 bg-amber-50 p-3 rounded-lg">
+            <span class="font-semibold">⚠️ Partial metadata</span><br>
+            MPD extracted but no valid ClearKey license. Output will lack keys.<br>
+            <code class="break-all text-xs">${escapeHtml(encodedPartial)}</code>
+          </div>`;
+          return encodedPartial;
+        }
+        
+        const finalEncoded = buildEncodedString(mpdUrl, keyId, key);
+        // display nicely with wrapping
+        encodedOutputDiv.innerHTML = `<code class="text-sm text-indigo-900 break-all font-mono">${escapeHtml(finalEncoded)}</code>
+        <div class="text-xs text-green-700 mt-2 flex gap-2 flex-wrap border-t pt-2 border-green-100">
+          <span>✅ MPD: ${escapeHtml(mpdUrl.substring(0, 70))}...</span>
+          <span>🔑 Key ID: ${escapeHtml(keyId.substring(0, 20))}…</span>
+        </div>`;
+        return finalEncoded;
+      }
+      
+      // simple escape for safe output
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+          return c;
+        });
+      }
+      
+      // get current generated encoded string from UI (if exists)
+      function getCurrentEncodedString() {
+        const rawText = encodedOutputDiv.innerText || encodedOutputDiv.textContent;
+        if (!rawText) return null;
+        // if it contains '❌' or '⚠️' then no valid, but try to extract any percent-encoded content
+        const match = rawText.match(/(https?%3A%2F%2F[^\s]+|%5B%5D|[a-zA-Z0-9%]+\.mpd%3F)/i);
+        if (match) return match[0];
+        // fallback: find something looks like encoded
+        const possibleEnc = rawText.match(/(https?%3A%2F%2F[^&]+&keys=[^&]+)/);
+        return possibleEnc ? possibleEnc[0] : null;
+      }
+      
+      // copy handler
+      copyBtn.addEventListener('click', () => {
+        let encodedValue = getCurrentEncodedString();
+        if (!encodedValue) {
+          const visibleText = encodedOutputDiv.innerText;
+          if (visibleText && (visibleText.includes('http%3A') || visibleText.includes('https%3A'))) {
+            encodedValue = visibleText.match(/(https?%3A%2F%2F[^\s]+)/)?.[0] || null;
+          }
+          if (!encodedValue) {
+            showToast("No valid encoded URL to copy. Generate one first.", true);
+            return;
+          }
+        }
+        navigator.clipboard.writeText(encodedValue).then(() => {
+          showToast("✅ Encoded URL copied to clipboard!");
+        }).catch(() => {
+          showToast("⚠️ Manual copy failed, select text manually.", true);
+        });
+      });
+      
+      // Test in player: open a new tab with constructed player link (dummy page parameter)
+      testPlayerBtn.addEventListener('click', () => {
+        let encodedParam = getCurrentEncodedString();
+        if (!encodedParam) {
+          const maybeText = encodedOutputDiv.innerText;
+          if (maybeText && (maybeText.includes('http%3A') || maybeText.includes('https%3A'))) {
+            const match = maybeText.match(/(https?%3A%2F%2F[a-zA-Z0-9%:\/\.\-_]+&keys=[a-fA-F0-9%:]+)/);
+            if (match) encodedParam = match[0];
+          }
+          if (!encodedParam) {
+            showToast("No encoded link. Please generate first.", true);
+            return;
+          }
+        }
+        // Build a demo player URL pointing to current origin (assumes Shaka/JW player page exists)
+        // We'll create a simple test URL that passes the parameter "streamData"
+        const testPageUrl = `${window.location.origin}${window.location.pathname}?play=${encodeURIComponent(encodedParam)}`;
+        // But to not break current tool, we open a lightweight preview? For better UX, open a simple shaka test window.
+        // we'll open a new window with embedded player using the extracted MPD & keys directly using parse again.
+        const rawInputVal = rawInput.value.trim();
+        if (rawInputVal) {
+          const parsedTest = parseStreamUrl(rawInputVal);
+          if (parsedTest && parsedTest.mpdUrl && parsedTest.key && parsedTest.keyId) {
+            // create player preview window content
+            const previewHtml = generatePlayerPreviewHtml(parsedTest.mpdUrl, parsedTest.keyId, parsedTest.key);
+            const newWin = window.open();
+            if (newWin) {
+              newWin.document.write(previewHtml);
+              newWin.document.title = "Stream Preview · Shaka Player";
+            } else {
+              showToast("Popup blocked! Allow popups to test player.", true);
+            }
+            return;
+          }
+        }
+        showToast("Cannot preview: missing DRM keys or stream manifest.", true);
+      });
+      
+      // generate a mini player page for preview
+      function generatePlayerPreviewHtml(mpdUrl, keyId, key) {
+        return `<!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Live Stream Test</title>
+        <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.11.0/dist/shaka-player.compiled.js"><\/script>
+        <style>body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh}video{max-width:100%;max-height:100vh;width:100%;background:black}</style>
+        </head>
+        <body><video id="video" controls autoplay style="width:100%; height:auto; max-height:100vh"></video>
+        <script>
+          const manifest = "${mpdUrl}";
+          const keyId = "${keyId.replace(/-/g, '')}";
+          const key = "${key}";
+          async function init() {
+            if (!shaka.Player.isBrowserSupported()) { alert("Browser not supported"); return; }
+            const video = document.getElementById('video');
+            const player = new shaka.Player(video);
+            player.configure({ drm: { clearKeys: { [keyId]: key } } });
+            player.addEventListener('error', e => console.error(e));
+            try {
+              await player.load(manifest);
+              console.log("Stream ready");
+            } catch(e) { alert("Playback error: "+e.message); }
+          }
+          init();
+        <\/script>
+        </body></html>`;
+      }
+      
+      // Encode main action
+      encodeBtn.addEventListener('click', () => {
+        const inputUrl = rawInput.value;
+        if (!inputUrl.trim()) {
+          showToast("Please enter a streaming URL first.", true);
+          encodedOutputDiv.innerHTML = `<span class="text-slate-400 italic">📛 Empty input — paste a DASH stream URL.</span>`;
+          return;
+        }
+        const resultEncoded = processAndRender(inputUrl);
+        if (resultEncoded) {
+          showToast("Encoded successfully! Copy the URL above.");
+        } else {
+          showToast("Parsing failed. Check if URL contains .mpd and drmLicense.", true);
+        }
+      });
+      
+      // example: exactly the URL from prompt
+      exampleBtn.addEventListener('click', () => {
+        const exampleUrl = "https://a151aivottlinear-a.akamaihd.net/OTTB/sin-nitro/live/dash/enc/bcj3iscpd6/out/v1/fcd137b391214f7cb99dd4d7be90ca87/cenc.mpd?%7CdrmScheme=clearkey&drmLicense=1a5df53609ebc9857898c490f4724918:77f62980d582ec541280796acf8b2d19";
+        rawInput.value = exampleUrl;
+        processAndRender(exampleUrl);
+        showToast("Example loaded. Click 'Encode & Generate' if not auto? Actually encoded automatically.");
+      });
+      
+      clearBtn.addEventListener('click', () => {
+        rawInput.value = "";
+        encodedOutputDiv.innerHTML = `<span class="text-slate-400 italic">No encoded link yet — paste a valid stream URL and click "Encode & Generate".</span>`;
+        showToast("Cleared", false);
+      });
+      
+      // optional auto-encode when input changes debounced?
+      let debounceTimer;
+      rawInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          if (rawInput.value.trim() !== "") {
+            processAndRender(rawInput.value);
+          }
+        }, 600);
+      });
+      
+      // initial load nothing
+    })();
+  </script>
+</body>
+</html>
