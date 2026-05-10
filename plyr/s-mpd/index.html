@@ -1,519 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Cine Arena • Channel Player by ID</title>
-    <link rel="shortcut icon" type="image/x-icon" href="https://cinearena.github.io/astro-jwplyr/faviconimg.jpeg" />
-    
-    <!-- Shaka Player + UI -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streaming by Asif Ansari</title>
+  <link rel="shortcut icon" type="image/x-icon" href="Cric stream Favicon.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.11.0/dist/shaka-player.compiled.js"></script>
+  <style>
+    body {
+      all: unset;
+      font-family: Arial, sans-serif;
+    }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #0a0a0a;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            color: #fff;
-        }
+    @keyframes marquee {
+      from { transform: translateX(0%); }
+      to { transform: translateX(-100%); }
+    }
 
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            background: #000;
-        }
+    .animate-marquee {
+      animation: marquee 50s linear infinite;
+    }
 
-        /* Top Bar */
-        .top-bar {
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(12px);
-            padding: 8px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 100;
-            flex-shrink: 0;
-        }
+    /* Video container styling */
+    #videoContainer {
+      aspect-ratio: 16 / 9;
+      background: black;
+      position: relative;
+    }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+    #videoContainer video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
 
-        .logo-img {
-            height: 38px;
-            width: auto;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .logo-img:hover { opacity: 0.85; }
+    /* Loading overlay */
+    .loading-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      background: rgba(0,0,0,0.7);
+      padding: 10px 20px;
+      border-radius: 5px;
+      z-index: 10;
+      font-size: 14px;
+    }
 
-        .brand-text {
-            font-weight: 700;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #FFFFFF, #ff4d4d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .channel-badge {
-            background: rgba(255, 0, 0, 0.15);
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border-left: 2px solid #ff0000;
-            backdrop-filter: blur(4px);
-        }
-
-        /* Player Wrapper */
-        .player-wrapper {
-            background: #000;
-            position: relative;
-            width: 100%;
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .shaka-video-container {
-            width: 100%;
-            height: 100%;
-            background: #000;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #000;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            padding: 12px 28px;
-            border-radius: 48px;
-            z-index: 200;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(255,50,50,0.5);
-            pointer-events: none;
-        }
-        .loading-spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid #ff0000;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .manual-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85);
-            border-radius: 56px;
-            padding: 14px 32px;
-            z-index: 300;
-            border: 1.5px solid #ff3333;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            display: none;
-            backdrop-filter: blur(12px);
-            transition: 0.2s;
-        }
-        .manual-overlay:hover {
-            background: #ff0000;
-            transform: translate(-50%, -50%) scale(1.02);
-        }
-
-        .toast-msg {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff0000dd;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            z-index: 400;
-            backdrop-filter: blur(8px);
-            pointer-events: none;
-            transition: opacity 0.3s;
-            opacity: 0;
-        }
-
-        .error-panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            border-radius: 20px;
-            padding: 24px 32px;
-            text-align: center;
-            z-index: 250;
-            border: 1px solid #ff3333;
-            backdrop-filter: blur(16px);
-            max-width: 80%;
-        }
-        .error-panel h3 { margin-bottom: 8px; color: #ff6666; }
-        .error-panel p { font-size: 0.85rem; opacity: 0.8; }
-
-        /* Shaka theme overrides */
-        .youtube-theme .shaka-played-range { background: #ff0000 !important; }
-        .youtube-theme .shaka-seek-bar-container input[type=range]::-webkit-slider-thumb { background: #ff0000 !important; }
-        .shaka-spinner-container { display: none !important; }
-        
-        @media (max-width: 680px) {
-            .brand-text { font-size: 1rem; }
-            .channel-badge { font-size: 0.65rem; }
-        }
-    </style>
+    .error-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff6b6b;
+      background: rgba(0,0,0,0.8);
+      padding: 15px 25px;
+      border-radius: 8px;
+      z-index: 10;
+      text-align: center;
+      max-width: 80%;
+    }
+  </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 
-<div class="app-container">
-    <div class="top-bar">
-        <div class="logo-area">
-            <img class="logo-img" src="https://cineplyr.pages.dev/assets/newlogo.png" alt="Cine Arena" onclick="window.open('https://t.me/cine_arena', '_blank')">
-            <span class="brand-text"></span>
-        </div>
-        <div class="channel-badge" id="nowPlayingBadge">📡 LOADING...</div>
+  <!-- 🔵 Header -->
+  <header class="p-4 bg-blue-900 text-white text-center">
+    <a href="https://cinearena.live">
+      <img src="cineheader.png" class="h-10 mx-auto" alt="Cine Arena">
+    </a>
+  </header>
+
+  <!-- 🟢 Scrolling Marquee Update Bar -->
+  <div class="flex items-center w-full bg-green-800">
+    <h4 class="shrink-0 m-0 text-lg text-white px-2">UPDATES:</h4>
+    <div class="overflow-hidden whitespace-nowrap flex-grow">
+      <p class="inline-block m-0 text-base text-white bg-red-600 px-2 py-1 animate-marquee">
+        If video not play refresh once and wait for few seconds video will start playing otherwise message in Telegram comments.
+        यदि वीडियो नहीं चलता है तो एक बार रिफ्रेश करें और कुछ सेकंड प्रतीक्षा करें वीडियो चलना शुरू हो जाएगा अन्यथा टेलीग्राम टिप्पणियों में संदेश दें।
+        ভিডিওটি না চললে একবার রিফ্রেশ করুন এবং কয়েক সেকেন্ড অপেক্ষা করুন ভিডিওটি চলতে শুরু করবে অন্যথায় টেলিগ্রামের মন্তব্যে বার্তা পাঠান।
+      </p>
     </div>
+  </div>
 
-    <div class="player-wrapper">
-        <div class="shaka-video-container youtube-theme" data-shaka-player>
-            <video id="mainVideo" autoplay muted playsinline preload="auto" poster="https://blogger.googleusercontent.com/img/a/AVvXsEiGqaZeRBZ6Y7yV5ZYSRiNRhBa5q9_EMx7R5TJcHd3XJwwHh2YhNOGt76Y4vEcUIjvIaA7W-Tw1RyMLP-4WZwVHA4mk18zwXl7HdSL5WabprIasDOWJO7jpL0zTQB4p_y7X0Rv0xwe-cJ-GvxofAgeRp2FIiNgB90n_b8Cqw0sAaZqVhJg_fi9UyfSO8KY"></video>
-        </div>
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-spinner"></div>
-            <span>LOADING STREAM...</span>
-        </div>
-        <div class="manual-overlay" id="manualPlayBtn">▶ CLICK TO PLAY</div>
-        <div id="errorPanel" class="error-panel" style="display: none;">
-            <h3>⚠️ PLAYBACK ERROR</h3>
-            <p id="errorMsg">Unable to load channel</p>
-        </div>
+  <!-- 🟣 Responsive Video Container with Shaka Player -->
+  <div class="w-full px-2 md:max-w-3xl md:mx-auto mt-4">
+    <div id="videoContainer" class="w-full rounded-md overflow-hidden bg-black relative">
+      <video id="shakaVideo" class="w-full h-full" autoplay></video>
+      <div id="loadingIndicator" class="loading-overlay hidden">Loading stream...</div>
     </div>
-    <div id="toastMsg" class="toast-msg"></div>
-</div>
+  </div>
 
-<script>
-    (function(){
-        // --------------------------------------------------------------
-        // CONFIGURATION: External JSON file (channels list)
-        // !!! REPLACE THIS URL WITH YOUR ACTUAL CHANNELS JSON FILE !!!
-        // The JSON must be an array of objects with fields: id, title, image, url, keyId, key
-        // --------------------------------------------------------------
-        const CHANNELS_JSON_URL = "https://raw.githubusercontent.com/cinestar26/cinearena/main/api/zee5.json";
-        
-        // Get requested channel ID from URL parameter "id"
-        const urlParams = new URLSearchParams(window.location.search);
-        const requestedChannelId = urlParams.get('id');
-        
-        // Global references
-        let player = null;
-        let ui = null;
-        let videoElement = null;
-        let container = null;
-        let currentChannel = null;
-        let channelsDatabase = [];      // full array of channels from external JSON
-        
-        // DOM elements
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const manualBtn = document.getElementById('manualPlayBtn');
-        const errorPanel = document.getElementById('errorPanel');
-        const errorMsgSpan = document.getElementById('errorMsg');
-        const nowPlayingBadge = document.getElementById('nowPlayingBadge');
-        const toastMsgDiv = document.getElementById('toastMsg');
-        
-        // Helper: show/hide loader
-        function showLoader(show) {
-            loadingOverlay.style.display = show ? 'flex' : 'none';
+  <!-- 🔻 Online Counter -->
+  <center class="mt-2">
+    <script src="//widget.supercounters.com/ssl/online_t.js"></script>
+    <script>sc_online_t(1707487,"Users Online","170ddb");</script>
+    <noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
+  </center>
+
+  <!-- 🔷 Telegram Button -->
+  <div class="bg-blue-600 w-full text-center py-3 mt-2">
+    <a href="https://t.me/cine_arena" target="_blank">
+      <button id="joinTelegramButton" class="bg-white text-blue-700 px-4 py-2 rounded font-semibold shadow hover:bg-gray-100 transition">
+        Join Telegram
+      </button>
+    </a>
+  </div>
+
+  <script>
+    // Disable right-click and hotkeys
+    document.addEventListener("contextmenu", function(e) {
+      e.preventDefault();
+    });
+
+    document.addEventListener("keydown", function(e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
+        (e.ctrlKey && e.key === "U")
+      ) {
+        e.preventDefault();
+      }
+    });
+
+    // DevTools Detection
+    (function() {
+      let devtoolsOpen = false;
+      const element = new Image();
+
+      Object.defineProperty(element, 'id', {
+        get: function() {
+          devtoolsOpen = true;
+          throw new Error("DevTools detected");
         }
-        
-        function showToast(message, duration = 3000) {
-            toastMsgDiv.textContent = message;
-            toastMsgDiv.style.opacity = '1';
-            setTimeout(() => { toastMsgDiv.style.opacity = '0'; }, duration);
+      });
+
+      setInterval(function() {
+        devtoolsOpen = false;
+        console.dir(element);
+        if (devtoolsOpen) {
+          alert("Developer tools are not allowed!");
+          window.open('', '_self').close();
         }
-        
-        function hideErrorPanel() {
-            errorPanel.style.display = 'none';
-        }
-        
-        function showErrorPanel(msg) {
-            errorMsgSpan.textContent = msg;
-            errorPanel.style.display = 'block';
-            setTimeout(() => {
-                if(errorPanel.style.display === 'block') 
-                    errorPanel.style.display = 'none';
-            }, 8000);
-        }
-        
-        // Initialize Shaka Player + UI
-        async function initShakaPlayer() {
-            shaka.polyfill.installAll();
-            if (!shaka.Player.isBrowserSupported()) {
-                throw new Error("Browser not supported for Shaka Player");
-            }
-            videoElement = document.getElementById('mainVideo');
-            container = document.querySelector('.shaka-video-container');
-            player = new shaka.Player(videoElement);
-            await player.attach(videoElement);
-            
-            // Configure UI with YouTube-like theme
-            ui = new shaka.ui.Overlay(player, container, videoElement);
-            ui.configure({
-                controlPanelElements: [
-                    'play_pause', 'time_and_duration', 'mute', 'volume', 'spacer',
-                    'captions', 'quality', 'language', 'picture_in_picture', 'fullscreen', 'overflow_menu'
-                ],
-                enableFullscreenOnRotation: true,
-            });
-            
-            // Global error handling for playback
-            player.addEventListener('error', (event) => {
-                const error = event.detail;
-                console.error('Shaka error:', error);
-                let errMsg = error.message || 'Playback failed';
-                if (error.code === 6012) errMsg = 'DRM / License error - invalid keys';
-                else if (error.code === 1002) errMsg = 'Manifest load failed (invalid URL or network)';
-                showErrorPanel(`Stream error: ${errMsg.substring(0, 100)}`);
-                showLoader(false);
-                // Show manual button if autoplay fails later
-            });
-            
-            videoElement.addEventListener('play', () => {
-                manualBtn.style.display = 'none';
-                hideErrorPanel();
-            });
-            
-            return true;
-        }
-        
-        // Load channel from external JSON by ID and play ONLY that channel
-        async function fetchAndPlayChannelById(channelId) {
-            if (!channelId) {
-                showErrorPanel("Missing 'id' parameter in URL. Example: ?id=ZeeTv");
-                nowPlayingBadge.innerHTML = "❌ NO ID PROVIDED";
-                showLoader(false);
-                return false;
-            }
-            
-            showLoader(true);
-            nowPlayingBadge.innerHTML = `🔍 FETCHING CHANNEL: ${channelId}`;
-            
-            try {
-                // Fetch external channels JSON
-                const response = await fetch(CHANNELS_JSON_URL, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Failed to load channels.json from ${CHANNELS_JSON_URL}`);
-                }
-                const channels = await response.json();
-                
-                if (!Array.isArray(channels) || channels.length === 0) {
-                    throw new Error("External JSON does not contain a valid array of channels.");
-                }
-                
-                channelsDatabase = channels;
-                
-                // Find the channel with matching ID (case-sensitive, exact match)
-                const matchedChannel = channelsDatabase.find(ch => ch.id === channelId);
-                
-                if (!matchedChannel) {
-                    const availableIds = channelsDatabase.map(c => c.id).join(', ');
-                    throw new Error(`Channel ID "${channelId}" not found. Available IDs: ${availableIds.substring(0, 150)}`);
-                }
-                
-                currentChannel = matchedChannel;
-                nowPlayingBadge.innerHTML = `🎬 ${currentChannel.title}`;
-                
-                // Configure DRM with clearKeys
-                if (!currentChannel.keyId || !currentChannel.key) {
-                    console.warn("Missing keyId/key for DRM, still attempting playback");
-                }
-                
-                const drmConfig = {
-                    clearKeys: {
-                        [currentChannel.keyId]: currentChannel.key
-                    }
-                };
-                
-                player.configure({ 
-                    drm: drmConfig,
-                    streaming: {
-                        lowLatencyMode: true,
-                        bufferingGoal: 15,
-                        rebufferingGoal: 2,
-                        bufferBehind: 15,
-                        retryParameters: {
-                            timeout: 10000,
-                            maxAttempts: 4,
-                            baseDelay: 300,
-                            backoffFactor: 1.2
-                        }
-                    },
-                    manifest: {
-                        retryParameters: { maxAttempts: 3, timeout: 8000 }
-                    }
-                });
-                
-                // Optional networking headers (some streams require referer/user-agent)
-                player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                    request.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
-                    request.headers['Referer'] = 'https://www.jiotv.com/';
-                    // Add cookie if present in url (optional)
-                    if (currentChannel.url.includes('__hdnea__') === false && currentChannel.cookie) {
-                        request.headers['Cookie'] = currentChannel.cookie;
-                    }
-                });
-                
-                // Load the manifest
-                await player.load(currentChannel.url);
-                showToast(`Now playing: ${currentChannel.title}`);
-                hideErrorPanel();
-                
-                // Attempt autoplay (video is muted by default to bypass policy)
-                try {
-                    await videoElement.play();
-                    // After successful play, unmute if user interacts
-                    const enableSoundOnce = () => {
-                        if (videoElement.muted) {
-                            videoElement.muted = false;
-                            showToast("🔊 Sound enabled", 1500);
-                        }
-                        document.removeEventListener('click', enableSoundOnce);
-                        document.removeEventListener('touchstart', enableSoundOnce);
-                    };
-                    document.addEventListener('click', enableSoundOnce, { once: true });
-                    document.addEventListener('touchstart', enableSoundOnce, { once: true });
-                } catch (autoplayErr) {
-                    console.log("Autoplay prevented, showing manual button", autoplayErr);
-                    manualBtn.style.display = 'flex';
-                    // Manual play handler
-                    const playHandler = async () => {
-                        try {
-                            await videoElement.play();
-                            manualBtn.style.display = 'none';
-                            if (videoElement.muted) {
-                                videoElement.muted = false;
-                                showToast("🔊 Sound enabled", 1500);
-                            }
-                        } catch (e) {
-                            showToast("Click again to play", 2000);
-                        }
-                        manualBtn.removeEventListener('click', playHandler);
-                    };
-                    manualBtn.addEventListener('click', playHandler, { once: true });
-                }
-                
-                showLoader(false);
-                return true;
-                
-            } catch (err) {
-                console.error("fetchAndPlayChannelById error:", err);
-                let friendlyMsg = err.message || "Unknown error";
-                if (friendlyMsg.includes("Failed to fetch") || friendlyMsg.includes("HTTP")) {
-                    friendlyMsg = `Cannot load channels.json from "${CHANNELS_JSON_URL}". Verify file exists and is accessible.`;
-                }
-                showErrorPanel(friendlyMsg);
-                nowPlayingBadge.innerHTML = "⚠️ CHANNEL ERROR";
-                showLoader(false);
-                return false;
-            }
-        }
-        
-        // Also support playing fallback if no ID? According to requirement: only load and play channels accessed by id.
-        // If no id parameter -> show error panel gracefully.
-        async function bootstrap() {
-            // Hide error panel initially
-            hideErrorPanel();
-            
-            // Initialize Shaka player first (no channel loaded yet)
-            try {
-                await initShakaPlayer();
-            } catch (initErr) {
-                console.error("Shaka init failed", initErr);
-                showErrorPanel("Player engine failed to initialize: " + initErr.message);
-                nowPlayingBadge.innerHTML = "⚠️ PLAYER ERROR";
-                return;
-            }
-            
-            if (!requestedChannelId) {
-                // No id provided -> show clear error and stop (no channel loaded)
-                nowPlayingBadge.innerHTML = "❓ NO ID PARAMETER";
-                showErrorPanel("Missing 'id' parameter in URL. Use ?id=ZeeTv (example). No channel will be loaded.");
-                showLoader(false);
-                return;
-            }
-            
-            // Load the specific channel by ID (only that channel, no list UI)
-            await fetchAndPlayChannelById(requestedChannelId);
-        }
-        
-        // Additional user interaction: unmute on any click on player area
-        function setupGlobalUnmute() {
-            const wrapper = document.querySelector('.player-wrapper');
-            if (wrapper) {
-                wrapper.addEventListener('click', () => {
-                    if (videoElement && videoElement.muted) {
-                        videoElement.muted = false;
-                        showToast("🔊 Unmuted", 1000);
-                    }
-                });
-            }
-        }
-        
-        // Start everything
-        bootstrap().catch(err => {
-            console.error("Bootstrap critical error:", err);
-            showErrorPanel("Critical startup error: " + err.message);
-        });
-        setupGlobalUnmute();
-        
-        // visibility change: attempt to resume if user comes back and video paused
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && videoElement && videoElement.paused && currentChannel) {
-                videoElement.play().catch(e => console.log("resume failed", e));
-            }
-        });
+      }, 1000);
     })();
-</script>
+
+    // Parse URL parameters to get MPD URL and DRM info
+    function getParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Try to get from various possible formats
+      let mpdUrl = urlParams.get('file') || urlParams.get('url') || urlParams.get('mpd');
+      
+      // If no parameter found, check if the URL contains .mpd directly
+      if (!mpdUrl) {
+        const currentUrl = window.location.href;
+        if (currentUrl.includes('.mpd')) {
+          // Extract everything before the first ?
+          mpdUrl = currentUrl.split('?')[0];
+        }
+      }
+      
+      // Handle pipe-separated format: mpd_url|drmScheme=xxx&drmLicense=xxx
+      if (!mpdUrl && window.location.search) {
+        const query = window.location.search.substring(1);
+        if (query.includes('|')) {
+          const [mpdPart, drmPart] = query.split('|');
+          mpdUrl = decodeURIComponent(mpdPart);
+          
+          const drmParams = new URLSearchParams(drmPart);
+          const drmScheme = drmParams.get("drmScheme");
+          const drmLicense = drmParams.get("drmLicense");
+          
+          if (drmLicense && drmLicense.includes(':')) {
+            const [keyId, key] = drmLicense.split(':');
+            return {
+              file: mpdUrl,
+              drmScheme: drmScheme,
+              keyId: keyId,
+              key: key
+            };
+          }
+        }
+      }
+      
+      // Standard query parameter approach
+      const drmScheme = urlParams.get('drmScheme');
+      const drmLicense = urlParams.get('drmLicense');
+      
+      let keyId = "", key = "";
+      if (drmLicense && drmLicense.includes(':')) {
+        [keyId, key] = drmLicense.split(':');
+      }
+      
+      return {
+        file: mpdUrl,
+        drmScheme: drmScheme,
+        keyId: keyId,
+        key: key
+      };
+    }
+
+    // Initialize Shaka Player
+    async function initShakaPlayer() {
+      const params = getParams();
+      
+      if (!params.file) {
+        showError("No stream URL provided. Please check the link format.");
+        console.error("No MPD URL found in parameters");
+        return;
+      }
+      
+      console.log("Loading stream:", params.file);
+      console.log("DRM Scheme:", params.drmScheme);
+      console.log("Key ID:", params.keyId);
+      
+      const videoElement = document.getElementById('shakaVideo');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      
+      // Check if browser supports Shaka Player
+      if (!shakaPlayer.Player.isBrowserSupported()) {
+        showError("Your browser doesn't support this streaming technology");
+        return;
+      }
+      
+      // Create player instance
+      const player = new shakaPlayer.Player(videoElement);
+      
+      // Show loading indicator
+      loadingIndicator.classList.remove('hidden');
+      
+      // Configure DRM if provided
+      if (params.drmScheme === 'clearkey' && params.keyId && params.key) {
+        const drmConfig = {
+          clearKeys: {}
+        };
+        // ClearKey format: keyId (without dashes) : key
+        const cleanKeyId = params.keyId.replace(/-/g, '');
+        drmConfig.clearKeys[cleanKeyId] = params.key;
+        
+        player.configure({
+          drm: drmConfig
+        });
+        
+        console.log("DRM configured with ClearKey");
+      }
+      
+      // Error handling
+      player.addEventListener('error', onPlayerError);
+      
+      // Try to load the stream
+      try {
+        await player.load(params.file);
+        console.log("Stream loaded successfully");
+        loadingIndicator.classList.add('hidden');
+        
+        // Auto-play (browsers may block this)
+        videoElement.play().catch(e => {
+          console.log("Auto-play prevented:", e);
+          loadingIndicator.textContent = "Click play to start";
+          setTimeout(() => {
+            loadingIndicator.classList.add('hidden');
+          }, 3000);
+        });
+      } catch (error) {
+        loadingIndicator.classList.add('hidden');
+        console.error("Error loading stream:", error);
+        
+        let errorMessage = "Failed to load stream. ";
+        if (error.code === 6012) {
+          errorMessage += "DRM license error. The content may be protected.";
+        } else if (error.code === 1001) {
+          errorMessage += "Network error. Check your connection.";
+        } else if (error.code === 2000) {
+          errorMessage += "Manifest format not supported.";
+        } else {
+          errorMessage += error.message || "Unknown error.";
+        }
+        
+        showError(errorMessage);
+      }
+    }
+    
+    function onPlayerError(event) {
+      console.error("Shaka Player error:", event.detail);
+      const error = event.detail;
+      
+      let message = "Playback error: ";
+      if (error.code === 6012) {
+        message += "DRM license required but not available.";
+      } else if (error.code === 1001) {
+        message += "Network error. Please refresh and try again.";
+      } else if (error.code === 2000 || error.code === 2001) {
+        message += "Stream manifest failed to load.";
+      } else {
+        message += error.message || "Unknown error";
+      }
+      
+      showError(message);
+    }
+    
+    function showError(message) {
+      const container = document.getElementById('videoContainer');
+      const existingError = container.querySelector('.error-message');
+      if (existingError) existingError.remove();
+      
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-message';
+      errorDiv.innerHTML = `
+        <strong>⚠️ Error</strong><br>
+        ${message}<br><br>
+        <button onclick="location.reload()" class="bg-blue-600 text-white px-4 py-1 rounded mt-2">
+          Refresh Page
+        </button>
+      `;
+      container.appendChild(errorDiv);
+    }
+    
+    // Initialize Shaka Player when page loads
+    let shakaPlayer = null;
+    
+    // Load Shaka polyfills and initialize
+    window.addEventListener('load', () => {
+      shakaPlayer = shaka;
+      initShakaPlayer();
+    });
+  </script>
 </body>
 </html>
