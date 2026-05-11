@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Fancode-1",
+        "url": "https://cinexstar.vercel.app/fancode1",
+        "logo": "https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"
+    },
+    {
+        "name": "Fncode-2",
+        "url": "https://cinexstar.vercel.app/fancode2",
+        "logo": "https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"
+    },
+    {
+        "name": "LaligaTV",
+        "url": "https://cinexstar.vercel.app/laligatv",
+        "logo": "https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"
+    },
+    {
+        "name": "Bein-1",
+        "url": "https://cinexstar.vercel.app/bein1",
+        "logo": "https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"
+    },
+    {
+        "name": "FOOTBALL Channels",
+        "url": "https://cinearena-allinone.vercel.app/football",
+        "logo": "https://play-lh.googleusercontent.com/P1wKLm09VA5cLjFyBfMCTQvMxGK06VX014Csbeso5TBNh3mMlyWLgWFR5wLOHCdJAek"
+    },
+    {
+        "name": "SONY Ten",
+        "url": "https://cinearena-site.vercel.app/sonyten",
+        "logo": "https://upload.wikimedia.org/wikipedia/en/c/cd/Sony_Sports_Network.svg"
+    },
+    {
+        "name": "TNT Sports",
+        "url": "https://cinearena-site.vercel.app/tnt",
+        "logo": "https://yt3.googleusercontent.com/LsMejcvY6MC4kH5HASIlE5UEEmdszstpFHV8-8x9Hv1dzypYD2gvYKnyDxvUSA5xRnHwGtMRwg=s900-c-k-c0x00ffffff-no-rj"
+    },
+    {
+        "name": "MOVIES Channels",
+        "url": "https://cine-movies.pages.dev/",
+        "logo": "https://thumbs.dreamstime.com/b/old-fashioned-movie-film-camera-logo-design-template-black-white-vector-illustration-video-production-logo-design-template-old-136115408.jpg"
+    },
+    {
+        "name": "MUSIC Channels",
+        "url": "https://cinemusic.pages.dev",
+        "logo": "https://img.freepik.com/premium-vector/colorful-musical-note-art-with-vibrant-splashes-musical-note-black-surrounded_53876-651215.jpg"
+    }
+]
