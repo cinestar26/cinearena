@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Cine Arena • Channel Player by ID</title>
-    <link rel="shortcut icon" type="image/x-icon" href="https://cinearena.github.io/astro-jwplyr/faviconimg.jpeg" />
-    
-    <!-- Shaka Player + UI -->
+    <title>Cine Arena - Channel Player</title>
+    <link rel="shortcut icon" type="image/x-icon" href="https://cinearena.github.io/astro-jwplyr/faviconimg.jpeg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         * {
             margin: 0;
@@ -20,15 +16,14 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #0a0a0a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            color: #fff;
         }
 
-        .app-container {
+        .app {
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -36,143 +31,86 @@
             background: #000;
         }
 
-        /* Top Bar */
-        .top-bar {
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(12px);
-            padding: 8px 20px;
+        .header {
+            background: rgba(0,0,0,0.95);
+            padding: 10px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             z-index: 100;
             flex-shrink: 0;
         }
 
-        .logo-area {
+        .logo {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
-        .logo-img {
-            height: 38px;
-            width: auto;
+        .logo img {
+            height: 36px;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
-        .logo-img:hover { opacity: 0.85; }
 
-        .brand-text {
+        .logo span {
+            font-size: 1.2rem;
             font-weight: 700;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, #FFFFFF, #ff4d4d);
+            background: linear-gradient(135deg, #fff, #ff0000);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
         }
 
-        .channel-badge {
-            background: rgba(255, 0, 0, 0.15);
-            padding: 6px 14px;
-            border-radius: 40px;
+        .channel-info {
+            background: rgba(255,0,0,0.15);
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 500;
             border-left: 2px solid #ff0000;
-            backdrop-filter: blur(4px);
         }
 
-        /* Player Wrapper */
-        .player-wrapper {
-            background: #000;
-            position: relative;
-            width: 100%;
+        .player-container {
             flex: 1;
-            min-height: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative;
+            background: #000;
         }
 
         .shaka-video-container {
             width: 100%;
             height: 100%;
-            background: #000;
-            position: relative;
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            background: #000;
         }
 
-        /* FIX: Force controls to remain visible and prevent auto-hide */
-        .shaka-controls-container {
-            visibility: visible !important;
-            opacity: 1 !important;
-            transition: none !important;
-        }
-        
-        .shaka-bottom-controls {
-            opacity: 1 !important;
-            visibility: visible !important;
-            transform: none !important;
-        }
-        
-        /* Prevent the default fade-out behavior */
-        .shaka-controls-container[shown="false"] {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
-        .shaka-video-container:hover .shaka-controls-container,
-        .shaka-controls-container {
-            opacity: 1 !important;
-            visibility: visible !important;
-            bottom: 0 !important;
-        }
-        
-        /* Keep control panel always accessible */
-        .shaka-controls-button-panel {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
-        /* Disable any pointer-events delay or hiding animations */
-        .shaka-controls-container {
-            animation: none !important;
-            transition: none !important;
-        }
-        
-        /* Ensure seek bar container always visible */
-        .shaka-range-container {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
+        .loader {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            padding: 12px 28px;
-            border-radius: 48px;
-            z-index: 200;
-            font-size: 0.85rem;
-            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 40px;
             display: none;
             align-items: center;
             gap: 12px;
-            border: 1px solid rgba(255,50,50,0.5);
-            pointer-events: none;
+            z-index: 200;
+            border: 1px solid #ff0000;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: white;
         }
-        .loading-spinner {
+
+        .loader.active {
+            display: flex;
+        }
+
+        .spinner {
             width: 18px;
             height: 18px;
             border: 2px solid rgba(255,255,255,0.3);
@@ -180,33 +118,62 @@
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .manual-overlay {
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .manual-play {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85);
-            border-radius: 56px;
+            background: rgba(0,0,0,0.9);
             padding: 14px 32px;
+            border-radius: 50px;
             z-index: 300;
-            border: 1.5px solid #ff3333;
+            border: 2px solid #ff0000;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             display: none;
-            backdrop-filter: blur(12px);
+            color: white;
             transition: 0.2s;
         }
-        .manual-overlay:hover {
+
+        .manual-play:hover {
             background: #ff0000;
             transform: translate(-50%, -50%) scale(1.02);
         }
 
-        .toast-msg {
+        .error-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            padding: 20px 30px;
+            border-radius: 16px;
+            text-align: center;
+            z-index: 250;
+            border: 1px solid #ff3333;
+            display: none;
+            max-width: 80%;
+        }
+
+        .error-box h3 {
+            color: #ff6666;
+            margin-bottom: 8px;
+        }
+
+        .error-box p {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .toast {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             background: #ff0000dd;
@@ -214,516 +181,294 @@
             padding: 8px 20px;
             border-radius: 40px;
             font-size: 0.8rem;
-            font-weight: 500;
             z-index: 400;
-            backdrop-filter: blur(8px);
-            pointer-events: none;
-            transition: opacity 0.3s;
             opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
 
-        .error-panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            border-radius: 20px;
-            padding: 24px 32px;
-            text-align: center;
-            z-index: 250;
-            border: 1px solid #ff3333;
-            backdrop-filter: blur(16px);
-            max-width: 80%;
+        .toast.show {
+            opacity: 1;
         }
-        .error-panel h3 { margin-bottom: 8px; color: #ff6666; }
-        .error-panel p { font-size: 0.85rem; opacity: 0.8; }
 
-        /* Shaka theme overrides - keep controls permanently visible */
-        .youtube-theme .shaka-bottom-controls {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        .youtube-theme .shaka-played-range { background: #ff0000 !important; }
-        .youtube-theme .shaka-seek-bar-container input[type=range]::-webkit-slider-thumb { background: #ff0000 !important; }
-        .shaka-spinner-container { display: none !important; }
-        
-        /* Force controls container to always show */
-        .shaka-video-container .shaka-controls-container {
-            transition: none !important;
-            animation: none !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
-        /* Prevent fade-out timer based hiding */
-        .shaka-controls-container[data-visible="false"] {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
-        /* Ensure overflow menus stay visible on hover */
-        .shaka-overflow-menu,
-        .shaka-settings-menu {
-            z-index: 1000;
-        }
-        
-        @media (max-width: 680px) {
-            .brand-text { font-size: 1rem; }
-            .channel-badge { font-size: 0.65rem; }
+        @media (max-width: 600px) {
+            .logo span { font-size: 1rem; }
+            .channel-info { font-size: 0.65rem; }
         }
     </style>
 </head>
 <body>
-
-<div class="app-container">
-    <div class="top-bar">
-        <div class="logo-area">
-            <img class="logo-img" src="https://cricstream4u.github.io/cinearena/cineheader.png" alt="Cine Arena" onclick="window.open('https://t.me/cine_arena', '_blank')">
-            <span class="brand-text">CINE ARENA</span>
+<div class="app">
+    <div class="header">
+        <div class="logo">
+            <img src="https://cricstream4u.github.io/cinearena/cineheader.png" alt="logo" onclick="window.open('https://t.me/cine_arena', '_blank')">
+            <span>CINE ARENA</span>
         </div>
-        <div class="channel-badge" id="nowPlayingBadge">📡 LOADING...</div>
+        <div class="channel-info" id="channelBadge">LOADING...</div>
     </div>
-
-    <div class="player-wrapper">
-        <div class="shaka-video-container youtube-theme" data-shaka-player id="shakaContainer">
-            <video id="mainVideo" autoplay muted playsinline preload="auto" poster="https://blogger.googleusercontent.com/img/a/AVvXsEiGqaZeRBZ6Y7yV5ZYSRiNRhBa5q9_EMx7R5TJcHd3XJwwHh2YhNOGt76Y4vEcUIjvIaA7W-Tw1RyMLP-4WZwVHA4mk18zwXl7HdSL5WabprIasDOWJO7jpL0zTQB4p_y7X0Rv0xwe-cJ-GvxofAgeRp2FIiNgB90n_b8Cqw0sAaZqVhJg_fi9UyfSO8KY"></video>
+    <div class="player-container">
+        <div class="shaka-video-container" id="videoContainer">
+            <video id="video" autoplay muted playsinline preload="auto"></video>
         </div>
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-spinner"></div>
-            <span>LOADING STREAM...</span>
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <span>BUFFERING...</span>
         </div>
-        <div class="manual-overlay" id="manualPlayBtn">▶ CLICK TO PLAY</div>
-        <div id="errorPanel" class="error-panel" style="display: none;">
-            <h3>⚠️ PLAYBACK ERROR</h3>
-            <p id="errorMsg">Unable to load channel</p>
+        <div class="manual-play" id="manualPlay">▶ CLICK TO PLAY</div>
+        <div class="error-box" id="errorBox">
+            <h3>⚠️ ERROR</h3>
+            <p id="errorMsg">Playback failed</p>
         </div>
+        <div class="toast" id="toast">Message</div>
     </div>
-    <div id="toastMsg" class="toast-msg"></div>
 </div>
 
 <script>
-    (function(){
-        // --------------------------------------------------------------
-        // CONFIGURATION: External JSON file (channels list)
-        // !!! REPLACE THIS URL WITH YOUR ACTUAL CHANNELS JSON FILE !!!
-        // The JSON must be an array of objects with fields: id, title, image, url, keyId, key
-        // --------------------------------------------------------------
-        const CHANNELS_JSON_URL = "./channels.json";
-        
-        // Get requested channel ID from URL parameter "id"
-        const urlParams = new URLSearchParams(window.location.search);
-        const requestedChannelId = urlParams.get('id');
-        
-        // Global references
-        let player = null;
-        let ui = null;
-        let videoElement = null;
-        let container = null;
-        let currentChannel = null;
-        let channelsDatabase = [];
-        let controlsFixed = false;
-        
-        // DOM elements
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const manualBtn = document.getElementById('manualPlayBtn');
-        const errorPanel = document.getElementById('errorPanel');
-        const errorMsgSpan = document.getElementById('errorMsg');
-        const nowPlayingBadge = document.getElementById('nowPlayingBadge');
-        const toastMsgDiv = document.getElementById('toastMsg');
-        
-        // Helper: show/hide loader
-        function showLoader(show) {
-            loadingOverlay.style.display = show ? 'flex' : 'none';
+    const CHANNELS_URL = "./channels.json";
+    const urlId = new URLSearchParams(window.location.search).get('id');
+    
+    let player = null;
+    let ui = null;
+    let video = null;
+    let container = null;
+    
+    const loader = document.getElementById('loader');
+    const manualBtn = document.getElementById('manualPlay');
+    const errorBox = document.getElementById('errorBox');
+    const errorMsg = document.getElementById('errorMsg');
+    const badge = document.getElementById('channelBadge');
+    const toast = document.getElementById('toast');
+    
+    function showToast(msg, duration = 3000) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+    }
+    
+    function showLoader(show) {
+        if (show) loader.classList.add('active');
+        else loader.classList.remove('active');
+    }
+    
+    function showError(msg) {
+        errorMsg.textContent = msg;
+        errorBox.style.display = 'block';
+        setTimeout(() => { errorBox.style.display = 'none'; }, 6000);
+    }
+    
+    function hideError() {
+        errorBox.style.display = 'none';
+    }
+    
+    function forceControlsVisible() {
+        if (!container) return;
+        const controls = container.querySelector('.shaka-controls-container');
+        if (controls) {
+            controls.style.opacity = '1';
+            controls.style.visibility = 'visible';
+            controls.setAttribute('shown', 'true');
+        }
+        const bottom = container.querySelector('.shaka-bottom-controls');
+        if (bottom) {
+            bottom.style.opacity = '1';
+            bottom.style.visibility = 'visible';
+        }
+    }
+    
+    async function initPlayer() {
+        shaka.polyfill.installAll();
+        if (!shaka.Player.isBrowserSupported()) {
+            throw new Error('Browser not supported');
         }
         
-        function showToast(message, duration = 3000) {
-            toastMsgDiv.textContent = message;
-            toastMsgDiv.style.opacity = '1';
-            setTimeout(() => { toastMsgDiv.style.opacity = '0'; }, duration);
+        video = document.getElementById('video');
+        container = document.getElementById('videoContainer');
+        player = new shaka.Player(video);
+        await player.attach(video);
+        
+        ui = new shaka.ui.Overlay(player, container, video);
+        ui.configure({
+            controlPanelElements: [
+                'play_pause', 'time_and_duration', 'mute', 'volume', 'spacer',
+                'captions', 'quality', 'fullscreen', 'overflow_menu'
+            ],
+            enableFullscreenOnRotation: true
+        });
+        
+        if (ui.controls) {
+            if (typeof ui.controls.setFadeTimeout === 'function') {
+                ui.controls.setFadeTimeout = () => {};
+            }
+            if (ui.controls.hide) {
+                ui.controls.hide = function() { return; };
+            }
+            if (typeof ui.controls.show === 'function') {
+                ui.controls.show();
+            }
+            if (ui.controls.fadeDelayMs !== undefined) {
+                ui.controls.fadeDelayMs = 999999999;
+            }
         }
         
-        function hideErrorPanel() {
-            errorPanel.style.display = 'none';
+        const style = document.createElement('style');
+        style.textContent = `
+            .shaka-controls-container {
+                opacity: 1 !important;
+                visibility: visible !important;
+                transition: none !important;
+            }
+            .shaka-controls-container[shown="false"] {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .shaka-bottom-controls {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setInterval(() => forceControlsVisible(), 500);
+        container.addEventListener('mousemove', () => forceControlsVisible());
+        container.addEventListener('touchstart', () => forceControlsVisible());
+        
+        player.addEventListener('error', (e) => {
+            const err = e.detail;
+            showError(err.message || 'Playback error');
+            showLoader(false);
+        });
+        
+        video.addEventListener('play', () => {
+            manualBtn.style.display = 'none';
+            hideError();
+            forceControlsVisible();
+        });
+        
+        return true;
+    }
+    
+    async function loadChannelById(channelId) {
+        if (!channelId) {
+            badge.innerHTML = '❌ NO ID';
+            showError('Missing ?id= parameter in URL');
+            showLoader(false);
+            return false;
         }
         
-        function showErrorPanel(msg) {
-            errorMsgSpan.textContent = msg;
-            errorPanel.style.display = 'block';
-            setTimeout(() => {
-                if(errorPanel.style.display === 'block') 
-                    errorPanel.style.display = 'none';
-            }, 8000);
-        }
+        showLoader(true);
+        badge.innerHTML = `🔍 ${channelId}`;
         
-        // FORCE CONTROLS TO NEVER HIDE - Override Shaka's internal timer
-        function forceControlsAlwaysVisible() {
-            if (!container) return;
+        try {
+            const res = await fetch(CHANNELS_URL, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}: Cannot load channels.json`);
             
-            // Method 1: Find the controls container and override any hiding behavior
-            const controlsContainer = container.querySelector('.shaka-controls-container');
-            if (controlsContainer) {
-                // Remove any existing fade timers
-                controlsContainer.style.opacity = '1';
-                controlsContainer.style.visibility = 'visible';
-                controlsContainer.setAttribute('shown', 'true');
-                
-                // Override any possible CSS transitions
-                controlsContainer.style.transition = 'none';
-                
-                // If there's a hide timer function, we need to patch it
-                // Access UI internal if possible, but also use MutationObserver
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.attributeName === 'style' || mutation.attributeName === 'class') {
-                            const el = mutation.target;
-                            if (el.style && (el.style.opacity === '0' || el.style.visibility === 'hidden')) {
-                                el.style.opacity = '1';
-                                el.style.visibility = 'visible';
-                                el.style.display = 'flex';
-                            }
-                            if (el.getAttribute && el.getAttribute('shown') === 'false') {
-                                el.setAttribute('shown', 'true');
-                            }
-                        }
-                    });
-                });
-                
-                observer.observe(controlsContainer, { attributes: true, attributeFilter: ['style', 'class', 'shown'] });
+            const channels = await res.json();
+            if (!Array.isArray(channels) || channels.length === 0) {
+                throw new Error('Invalid channels data');
             }
             
-            // Method 2: Override all control panel elements
-            const bottomControls = container.querySelector('.shaka-bottom-controls');
-            if (bottomControls) {
-                bottomControls.style.opacity = '1';
-                bottomControls.style.visibility = 'visible';
+            const channel = channels.find(c => c.id === channelId);
+            if (!channel) {
+                const ids = channels.map(c => c.id).slice(0, 5).join(', ');
+                throw new Error(`ID "${channelId}" not found. Available: ${ids}...`);
             }
             
-            // Method 3: Periodically re-apply visibility (backup)
-            setInterval(() => {
-                const ctrlContainer = container?.querySelector('.shaka-controls-container');
-                if (ctrlContainer) {
-                    const computedStyle = window.getComputedStyle(ctrlContainer);
-                    if (computedStyle.opacity === '0' || computedStyle.visibility === 'hidden') {
-                        ctrlContainer.style.opacity = '1';
-                        ctrlContainer.style.visibility = 'visible';
-                        ctrlContainer.setAttribute('shown', 'true');
+            badge.innerHTML = `🎬 ${channel.title}`;
+            
+            const drmConfig = {
+                clearKeys: {
+                    [channel.keyId]: channel.key
+                }
+            };
+            
+            player.configure({
+                drm: drmConfig,
+                streaming: {
+                    lowLatencyMode: true,
+                    bufferingGoal: 15,
+                    rebufferingGoal: 2,
+                    retryParameters: {
+                        timeout: 10000,
+                        maxAttempts: 4,
+                        baseDelay: 300
                     }
-                    // Also ensure bottom panel is visible
-                    const bottom = container.querySelector('.shaka-bottom-controls');
-                    if (bottom && (bottom.style.opacity === '0' || bottom.style.visibility === 'hidden')) {
-                        bottom.style.opacity = '1';
-                        bottom.style.visibility = 'visible';
-                    }
                 }
-            }, 500);
-        }
-        
-        // Initialize Shaka Player + UI with controls always visible configuration
-        async function initShakaPlayer() {
-            shaka.polyfill.installAll();
-            if (!shaka.Player.isBrowserSupported()) {
-                throw new Error("Browser not supported for Shaka Player");
-            }
-            videoElement = document.getElementById('mainVideo');
-            container = document.querySelector('.shaka-video-container');
-            player = new shaka.Player(videoElement);
-            await player.attach(videoElement);
-            
-            // Configure UI with YouTube-like theme
-            ui = new shaka.ui.Overlay(player, container, videoElement);
-            ui.configure({
-                controlPanelElements: [
-                    'play_pause', 'time_and_duration', 'mute', 'volume', 'spacer',
-                    'captions', 'quality', 'language', 'picture_in_picture', 'fullscreen', 'overflow_menu'
-                ],
-                enableFullscreenOnRotation: true,
             });
             
-            // CRITICAL: Disable controls auto-hide timer in Shaka UI
-            // Access the internal controls instance if possible
-            if (ui && ui.controls) {
-                // Set controls to always be visible
-                if (typeof ui.controls.setFadeTimeout === 'function') {
-                    // Override the fade timeout to never hide
-                    ui.controls.setFadeTimeout = () => {};
-                }
-                if (ui.controls.hide) {
-                    // Monkey patch hide method to do nothing
-                    const originalHide = ui.controls.hide;
-                    ui.controls.hide = function() {
-                        // Prevent hiding but keep functionality
-                        if (this.isTouchSupported) return;
-                        // Do nothing - keep visible
-                        return;
-                    };
-                }
-                // Force show controls permanently
-                if (typeof ui.controls.show === 'function') {
-                    ui.controls.show();
-                }
-                // Set fade delay to a very large number
-                if (ui.controls.fadeDelayMs !== undefined) {
-                    ui.controls.fadeDelayMs = 999999999;
-                }
-                // Set any hiding flags to false
-                if (ui.controls.anyButtonSeen_) {
-                    ui.controls.anyButtonSeen_ = true;
-                }
-            }
-            
-            // Also patch the CSS via style injection
-            const style = document.createElement('style');
-            style.textContent = `
-                .shaka-controls-container {
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transition: none !important;
-                    animation: none !important;
-                }
-                .shaka-controls-container[shown="false"] {
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                }
-                .shaka-bottom-controls {
-                    opacity: 1 !important;
-                    visibility: visible !important;
-                    transform: translateY(0) !important;
-                }
-                .shaka-controls-container .shaka-controls-button-panel {
-                    opacity: 1 !important;
-                }
-                .shaka-controls-container button {
-                    opacity: 1 !important;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Force visibility after UI is fully built
-            setTimeout(() => {
-                forceControlsAlwaysVisible();
-                // Show controls explicitly
-                if (ui && ui.controls && typeof ui.controls.show === 'function') {
-                    ui.controls.show();
-                }
-            }, 100);
-            
-            // Global error handling for playback
-            player.addEventListener('error', (event) => {
-                const error = event.detail;
-                console.error('Shaka error:', error);
-                let errMsg = error.message || 'Playback failed';
-                if (error.code === 6012) errMsg = 'DRM / License error - invalid keys';
-                else if (error.code === 1002) errMsg = 'Manifest load failed (invalid URL or network)';
-                showErrorPanel(`Stream error: ${errMsg.substring(0, 100)}`);
-                showLoader(false);
+            player.getNetworkingEngine().registerRequestFilter((type, req) => {
+                req.headers['User-Agent'] = 'Mozilla/5.0';
+                req.headers['Referer'] = 'https://www.jiotv.com/';
             });
             
-            videoElement.addEventListener('play', () => {
-                manualBtn.style.display = 'none';
-                hideErrorPanel();
-            });
-            
-            // Mouse move also forces controls to stay
-            container.addEventListener('mousemove', () => {
-                if (ui && ui.controls && typeof ui.controls.show === 'function') {
-                    ui.controls.show();
-                }
-                forceControlsAlwaysVisible();
-            });
-            
-            // Touch events for mobile
-            container.addEventListener('touchstart', () => {
-                if (ui && ui.controls && typeof ui.controls.show === 'function') {
-                    ui.controls.show();
-                }
-                forceControlsAlwaysVisible();
-            });
-            
-            return true;
-        }
-        
-        // Load channel from external JSON by ID
-        async function fetchAndPlayChannelById(channelId) {
-            if (!channelId) {
-                showErrorPanel("Missing 'id' parameter in URL. Example: ?id=ZeeTv");
-                nowPlayingBadge.innerHTML = "❌ NO ID PROVIDED";
-                showLoader(false);
-                return false;
-            }
-            
-            showLoader(true);
-            nowPlayingBadge.innerHTML = `🔍 FETCHING CHANNEL: ${channelId}`;
+            await player.load(channel.url);
+            showToast(`Now playing: ${channel.title}`);
+            hideError();
+            forceControlsVisible();
             
             try {
-                const response = await fetch(CHANNELS_JSON_URL, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: Failed to load channels.json from ${CHANNELS_JSON_URL}`);
-                }
-                const channels = await response.json();
-                
-                if (!Array.isArray(channels) || channels.length === 0) {
-                    throw new Error("External JSON does not contain a valid array of channels.");
-                }
-                
-                channelsDatabase = channels;
-                const matchedChannel = channelsDatabase.find(ch => ch.id === channelId);
-                
-                if (!matchedChannel) {
-                    const availableIds = channelsDatabase.map(c => c.id).join(', ');
-                    throw new Error(`Channel ID "${channelId}" not found. Available IDs: ${availableIds.substring(0, 150)}`);
-                }
-                
-                currentChannel = matchedChannel;
-                nowPlayingBadge.innerHTML = `🎬 ${currentChannel.title}`;
-                
-                const drmConfig = {
-                    clearKeys: {
-                        [currentChannel.keyId]: currentChannel.key
+                await video.play();
+                const unmute = () => {
+                    if (video.muted) {
+                        video.muted = false;
+                        showToast('🔊 Sound enabled', 1500);
                     }
+                    document.removeEventListener('click', unmute);
+                    document.removeEventListener('touchstart', unmute);
                 };
-                
-                player.configure({ 
-                    drm: drmConfig,
-                    streaming: {
-                        lowLatencyMode: true,
-                        bufferingGoal: 15,
-                        rebufferingGoal: 2,
-                        bufferBehind: 15,
-                        retryParameters: {
-                            timeout: 10000,
-                            maxAttempts: 4,
-                            baseDelay: 300,
-                            backoffFactor: 1.2
+                document.addEventListener('click', unmute, { once: true });
+                document.addEventListener('touchstart', unmute, { once: true });
+            } catch (autoplayErr) {
+                manualBtn.style.display = 'flex';
+                const playHandler = async () => {
+                    try {
+                        await video.play();
+                        manualBtn.style.display = 'none';
+                        if (video.muted) {
+                            video.muted = false;
+                            showToast('🔊 Sound enabled', 1500);
                         }
-                    },
-                    manifest: {
-                        retryParameters: { maxAttempts: 3, timeout: 8000 }
+                        forceControlsVisible();
+                    } catch (e) {
+                        showToast('Click again to play', 1500);
                     }
-                });
-                
-                player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                    request.headers['User-Agent'] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
-                    request.headers['Referer'] = 'https://www.jiotv.com/';
-                    if (currentChannel.cookie) {
-                        request.headers['Cookie'] = currentChannel.cookie;
-                    }
-                });
-                
-                await player.load(currentChannel.url);
-                showToast(`Now playing: ${currentChannel.title}`);
-                hideErrorPanel();
-                
-                // Keep controls visible after load
-                forceControlsAlwaysVisible();
-                if (ui && ui.controls && typeof ui.controls.show === 'function') {
-                    ui.controls.show();
-                }
-                
-                try {
-                    await videoElement.play();
-                    const enableSoundOnce = () => {
-                        if (videoElement.muted) {
-                            videoElement.muted = false;
-                            showToast("🔊 Sound enabled", 1500);
-                        }
-                        document.removeEventListener('click', enableSoundOnce);
-                        document.removeEventListener('touchstart', enableSoundOnce);
-                    };
-                    document.addEventListener('click', enableSoundOnce, { once: true });
-                    document.addEventListener('touchstart', enableSoundOnce, { once: true });
-                } catch (autoplayErr) {
-                    console.log("Autoplay prevented, showing manual button", autoplayErr);
-                    manualBtn.style.display = 'flex';
-                    const playHandler = async () => {
-                        try {
-                            await videoElement.play();
-                            manualBtn.style.display = 'none';
-                            forceControlsAlwaysVisible();
-                            if (videoElement.muted) {
-                                videoElement.muted = false;
-                                showToast("🔊 Sound enabled", 1500);
-                            }
-                        } catch (e) {
-                            showToast("Click again to play", 2000);
-                        }
-                        manualBtn.removeEventListener('click', playHandler);
-                    };
-                    manualBtn.addEventListener('click', playHandler, { once: true });
-                }
-                
-                showLoader(false);
-                return true;
-                
-            } catch (err) {
-                console.error("fetchAndPlayChannelById error:", err);
-                let friendlyMsg = err.message || "Unknown error";
-                if (friendlyMsg.includes("Failed to fetch") || friendlyMsg.includes("HTTP")) {
-                    friendlyMsg = `Cannot load channels.json from "${CHANNELS_JSON_URL}". Verify file exists.`;
-                }
-                showErrorPanel(friendlyMsg);
-                nowPlayingBadge.innerHTML = "⚠️ CHANNEL ERROR";
-                showLoader(false);
-                return false;
-            }
-        }
-        
-        async function bootstrap() {
-            hideErrorPanel();
-            
-            try {
-                await initShakaPlayer();
-                // Force controls visible after init
-                forceControlsAlwaysVisible();
-            } catch (initErr) {
-                console.error("Shaka init failed", initErr);
-                showErrorPanel("Player engine failed to initialize: " + initErr.message);
-                nowPlayingBadge.innerHTML = "⚠️ PLAYER ERROR";
-                return;
+                    manualBtn.removeEventListener('click', playHandler);
+                };
+                manualBtn.addEventListener('click', playHandler, { once: true });
             }
             
-            if (!requestedChannelId) {
-                nowPlayingBadge.innerHTML = "❓ NO ID PARAMETER";
-                showErrorPanel("Missing 'id' parameter in URL. Use ?id=ZeeTv (example). No channel will be loaded.");
-                showLoader(false);
-                // Still keep controls visible even without channel
-                forceControlsAlwaysVisible();
-                return;
-            }
+            showLoader(false);
+            return true;
             
-            await fetchAndPlayChannelById(requestedChannelId);
+        } catch (err) {
+            console.error(err);
+            showError(err.message);
+            badge.innerHTML = '⚠️ ERROR';
+            showLoader(false);
+            return false;
+        }
+    }
+    
+    async function bootstrap() {
+        try {
+            await initPlayer();
+            forceControlsVisible();
+        } catch (err) {
+            showError('Player init failed: ' + err.message);
+            return;
         }
         
-        function setupGlobalUnmute() {
-            const wrapper = document.querySelector('.player-wrapper');
-            if (wrapper) {
-                wrapper.addEventListener('click', () => {
-                    if (videoElement && videoElement.muted) {
-                        videoElement.muted = false;
-                        showToast("🔊 Unmuted", 1000);
-                    }
-                    forceControlsAlwaysVisible();
-                });
-            }
+        if (!urlId) {
+            badge.innerHTML = '❌ NO ID';
+            showError('Add ?id=ChannelName to URL (e.g., ?id=ZeeTv)');
+            showLoader(false);
+            forceControlsVisible();
+            return;
         }
         
-        bootstrap().catch(err => {
-            console.error("Bootstrap critical error:", err);
-            showErrorPanel("Critical startup error: " + err.message);
-        });
-        setupGlobalUnmute();
-        
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && videoElement && videoElement.paused && currentChannel) {
-                videoElement.play().catch(e => console.log("resume failed", e));
-            }
-            forceControlsAlwaysVisible();
-        });
-        
-        // Extra safety: keep controls visible on any user interaction
-        document.body.addEventListener('click', () => forceControlsAlwaysVisible());
-        document.body.addEventListener('mousemove', () => forceControlsAlwaysVisible());
-    })();
+        await loadChannelById(urlId);
+    }
+    
+    bootstrap();
 </script>
 </body>
 </html>
