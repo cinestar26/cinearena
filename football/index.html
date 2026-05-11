@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CineArena.Live | Pop-up Player</title>
+    <link rel="icon" href="https://cineplyr.pages.dev/assets/cinefav.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a2b6d;
+            --secondary: #2a4ab0;
+            --accent: #FF8C42;
+            --light: #f0f5ff;
+            --dark: #0c1a4a;
+            --card-bg: rgba(18, 33, 85, 0.6);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0c1a4a 0%, #1a2b6d 100%);
+            min-height: 100vh;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(42, 74, 176, 0.15) 0%, transparent 20%), 
+                        radial-gradient(circle at 90% 80%, rgba(255, 140, 66, 0.15) 0%, transparent 20%);
+            z-index: -1;
+        }
+
+        .header-gradient {
+            background: rgba(26, 43, 109, 0.85);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 12px rgba(0,0,0,.15);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .site-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .channel-card {
+            transition: all .3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transform: translateY(0);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            min-height: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .channel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(26, 43, 109, 0.7);
+            border-color: rgba(255,140,66,0.3);
+        }
+
+        .channel-image-container {
+            padding: 20px 0 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            background: var(--card-bg);
+        }
+
+        .channel-image {
+            height: 120px;
+            width: 100%;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .channel-title {
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(12, 26, 74, 0.8);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform .28s ease-in-out;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .telegram-btn {
+            background: #09C842;
+            color: white;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .telegram-btn:hover {
+            transform: scale(1.08);
+        }
+
+        .minimal-footer {
+            background: rgba(12, 26, 74, 0.9);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: .9rem;
+            margin-top: auto;
+            backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .telegram-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #09C842 0%, #09C842 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-top: 10px;
+            text-decoration: none;
+            transition: all .3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255,106,0,0.18);
+            font-size: 0.95rem;
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Popup Player Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+
+        .popup-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup-container {
+            width: 90%;
+            max-width: 1200px;
+            background: #0a0f2a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,140,66,0.4);
+            animation: scaleUp 0.25s ease-out;
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(26, 43, 109, 0.95);
+            border-bottom: 1px solid rgba(255,140,66,0.5);
+        }
+
+        .popup-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .popup-title i {
+            color: #FF8C42;
+        }
+
+        .close-popup {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-popup:hover {
+            background: #ff4444;
+            transform: rotate(90deg);
+        }
+
+        .iframe-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #000;
+        }
+
+        .iframe-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .popup-footer {
+            padding: 12px 20px;
+            background: rgba(12, 26, 74, 0.9);
+            font-size: 0.8rem;
+            text-align: center;
+            color: #ccc;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,140,66,0.3);
+            border-radius: 50%;
+            border-top-color: #FF8C42;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .channels-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 992px) {
+            .channels-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .channels-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .section-title { font-size: 1.6rem; }
+            .channel-image { height: 100px; }
+            .popup-container { width: 95%; }
+        }
+        @media (max-width: 480px) {
+            .channels-grid { gap: 12px; }
+            .channel-card { min-height: 180px; }
+            .channel-image { height: 90px; }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 80, 80, 0.2);
+            border-radius: 24px;
+            margin: 20px;
+            color: #ffb3b3;
+        }
+
+        .refresh-btn {
+            background: #FF8C42;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: #0c1a4a;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #ffa059;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <header class="header-gradient text-white site-container flex items-center justify-between sticky top-0 z-40 py-3">
+        <button id="openMenu" class="lg:hidden text-white" aria-label="Open menu">
+            <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+        <a href="javascript:void(0)" class="absolute left-1/2 transform -translate-x-1/2 lg:static lg:transform-none" id="homeLink">
+            <span class="text-2xl font-bold tracking-wide">
+                CineArena<span class="text-green-400">.Live</span>
+            </span>
+        </a>
+        <nav class="hidden lg:flex gap-6" aria-label="Main navigation">
+            <a href="javascript:void(0)" class="text-gray-300 hover:text-white flex items-center gap-1 refresh-home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="https://cinearena-allinone.vercel.app/ipl26" class="text-gray-300 hover:text-white flex items-center gap-1" target="_blank" rel="noopener">
+                <i class="fas fa-baseball-bat-ball text-orange-400"></i> IPL
+            </a>
+            <a href="https://cinefancode.pages.dev" class="text-gray-300 hover:text-white flex items-center gap-1" target="_blank" rel="noopener">
+                <i class="fas fa-tv text-blue-400"></i> Fancode
+            </a>
+            <a href="https://cine-movies.pages.dev" class="text-gray-300 hover:text-white flex items-center gap-1" target="_blank" rel="noopener">
+                <i class="fas fa-film text-yellow-400"></i> Movies
+            </a>
+            <a href="https://cinemusic.pages.dev" class="text-gray-300 hover:text-white flex items-center gap-1" target="_blank" rel="noopener">
+                <i class="fas fa-music text-purple-400"></i> Music
+            </a>
+        </nav>
+        <div class="flex items-center gap-3">
+            <a href="https://t.me/cine_arena" target="_blank" rel="noopener" class="telegram-btn" aria-label="Telegram channel">
+                <i class="fab fa-telegram text-xl" aria-hidden="true"></i>
+            </a>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 z-50 lg:hidden" aria-hidden="true">
+        <div id="overlay" class="absolute inset-0 bg-black/70" onclick="window.toggleMobileMenu && window.toggleMobileMenu()"></div>
+        <div class="relative w-4/5 max-w-xs h-full bg-[#0c1a4a] shadow-xl" role="dialog" aria-modal="true">
+            <div class="px-4 py-3 flex justify-between items-center header-gradient">
+                <span class="text-xl font-bold text-white">CineArena<span class="text-green-400">.Live</span></span>
+                <button onclick="window.toggleMobileMenu && window.toggleMobileMenu()" class="text-white p-1 rounded-full hover:bg-white/20" aria-label="Close menu">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-3">
+                    <li><a href="javascript:void(0)" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white mobile-nav-refresh"><i class="fas fa-home mr-3 text-lg text-blue-400"></i> Home</a></li>
+                    <li><a href="https://cinearena-allinone.vercel.app/ipl26" target="_blank" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white"><i class="fas fa-baseball-bat-ball mr-3 text-lg text-orange-400"></i> IPL</a></li>
+                    <li><a href="https://cinefancode.pages.dev" target="_blank" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white"><i class="fas fa-tv mr-3 text-lg text-blue-400"></i> Fancode</a></li>
+                    <li><a href="https://cine-movies.pages.dev" target="_blank" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white"><i class="fas fa-film mr-3 text-lg text-yellow-400"></i> Movies</a></li>
+                    <li><a href="https://cinemusic.pages.dev" target="_blank" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white"><i class="fas fa-music mr-3 text-lg text-purple-400"></i> Music</a></li>
+                    <li><a href="https://t.me/cine_arena" target="_blank" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-blue-500/20 hover:text-white"><i class="fab fa-telegram mr-3 text-lg text-blue-300"></i> Telegram</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <main class="site-container px-4 py-6 mx-auto" id="main">
+        <h2 class="section-title">Streaming Channels</h2>
+        <div id="channels-container" class="channels-grid" aria-live="polite">
+            <div class="col-span-full text-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-orange-400"></i><p class="mt-2">Loading channels from external source...</p></div>
+        </div>
+        <div class="mt-8 p-4 bg-blue-900/30 rounded-lg border border-blue-700/50">
+            <p class="text-sm text-gray-300 text-center">This site aggregates external streams. All content belongs to respective owners. Click any card to watch in popup player.</p>
+            <p class="text-center mt-2"><a href="https://t.me/stream247" class="text-cyan-300 hover:text-cyan-200">Contact: https://t.me/stream247</a></p>
+        </div>
+    </main>
+
+    <div class="minimal-footer">
+        <div class="site-container">
+            <a href="https://t.me/cine_arena" target="_blank" rel="noopener" class="telegram-link">
+                <i class="fab fa-telegram" aria-hidden="true"></i> Join our Telegram Channel
+            </a>
+        </div>
+    </div>
+
+    <!-- Popup Player Modal -->
+    <div id="popupPlayer" class="popup-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <div class="popup-title"><i class="fas fa-play-circle"></i> <span id="popupChannelName">Now Playing</span></div>
+                <button class="close-popup" id="closePopupBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="iframe-wrapper" id="iframeWrapper">
+                <iframe id="streamIframe" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
+            </div>
+            <div class="popup-footer">
+                <i class="fas fa-info-circle"></i> External Stream | Close player to return
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // -------------------------------
+        // CINEARENA APP - FETCH JSON + POPUP PLAYER
+        // -------------------------------
+        
+        // Fallback static channels in case external JSON fails
+        const FALLBACK_CHANNELS = [
+            {"name":"IPL","url":"https://cinearena-allinone.vercel.app/ipl26","logo":"https://pbs.twimg.com/media/G5I9Ax7bAAAof2e.jpg"},
+            {"name":"PSL","url":"https://psl.mumtajhusainbr.workers.dev/","logo":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGiUwm3EbRYCNpJbamxW0K7Px5wod1tzuLdQ&s"},
+            {"name":"FANCODE","url":"https://cinefancode.pages.dev","logo":"https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"},
+            {"name":"FANCODE (WW)","url":"https://cinefancodeww.pages.dev","logo":"https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"},
+            {"name":"FOOTBALL Channels","url":"https://cinearena-allinone.vercel.app/football","logo":"https://play-lh.googleusercontent.com/P1wKLm09VA5cLjFyBfMCTQvMxGK06VX014Csbeso5TBNh3mMlyWLgWFR5wLOHCdJAek"},
+            {"name":"SONY Ten","url":"https://cinearena-site.vercel.app/sonyten","logo":"https://upload.wikimedia.org/wikipedia/en/c/cd/Sony_Sports_Network.svg"},
+            {"name":"TNT Sports","url":"https://cinearena-site.vercel.app/tnt","logo":"https://yt3.googleusercontent.com/LsMejcvY6MC4kH5HASIlE5UEEmdszstpFHV8-8x9Hv1dzypYD2gvYKnyDxvUSA5xRnHwGtMRwg=s900-c-k-c0x00ffffff-no-rj"},
+            {"name":"MOVIES Channels","url":"https://cine-movies.pages.dev/","logo":"https://thumbs.dreamstime.com/b/old-fashioned-movie-film-camera-logo-design-template-black-white-vector-illustration-video-production-logo-design-template-old-136115408.jpg"},
+            {"name":"MUSIC Channels","url":"https://cinemusic.pages.dev","logo":"https://img.freepik.com/premium-vector/colorful-musical-note-art-with-vibrant-splashes-musical-note-black-surrounded_53876-651215.jpg"}
+        ];
+        
+        class CineArenaPlayer {
+            constructor() {
+                this.channelsData = [];
+                this.container = document.getElementById('channels-container');
+                this.popupOverlay = document.getElementById('popupPlayer');
+                this.streamIframe = document.getElementById('streamIframe');
+                this.popupChannelNameSpan = document.getElementById('popupChannelName');
+                this.closePopupBtn = document.getElementById('closePopupBtn');
+                this.isLoading = true;
+                this.init();
+            }
+            
+            async init() {
+                this.setupEventBindings();
+                await this.fetchExternalChannels();
+                this.renderChannels();
+                this.setupRefreshEvents();
+            }
+            
+            setupEventBindings() {
+                // Close popup
+                this.closePopupBtn.addEventListener('click', () => this.closePopup());
+                this.popupOverlay.addEventListener('click', (e) => {
+                    if (e.target === this.popupOverlay) this.closePopup();
+                });
+                // ESC key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.popupOverlay.classList.contains('active')) {
+                        this.closePopup();
+                    }
+                });
+            }
+            
+            async fetchExternalChannels() {
+                // Define external JSON URL (you can replace with actual endpoint)
+                // Using a public demo endpoint that returns dummy structure, but we will override with demo data
+                // To make it functional live, we point to a reliable JSON server with proper CORS.
+                // For real usage, replace with your own JSON URL.
+                const EXTERNAL_JSON_URL = 'https://cinearena.fun/api/football.json';
+                // The above gist may not exist, but to demonstrate, we will also try to fetch from a placeholder and provide fallback.
+                // For robust demo, we'll use a dynamic approach: try to fetch, if fails -> use fallback plus internal channels.
+                try {
+                    // Simulate fetching with timeout + cross-origin handling, many free jsons support CORS.
+                    // Use a proxy-free approach: we fetch from a public API endpoint that returns valid channel array.
+                    // However, to guarantee load, we will check if response is valid array.
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    const response = await fetch(EXTERNAL_JSON_URL, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (Array.isArray(data) && data.length > 0 && data[0].name && data[0].url) {
+                            this.channelsData = data;
+                            console.log("✅ Loaded channels from external JSON");
+                            return;
+                        } else {
+                            throw new Error("Invalid JSON structure");
+                        }
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (err) {
+                    console.warn("⚠️ Could not fetch external JSON, using fallback + default preset:", err.message);
+                    // use fallback cleverly: we can also merge with predefined list
+                    this.channelsData = [...FALLBACK_CHANNELS];
+                    // Optionally we could add a note but it's fine.
+                }
+            }
+            
+            renderChannels() {
+                if (!this.container) return;
+                this.container.innerHTML = '';
+                if (!this.channelsData.length) {
+                    this.container.innerHTML = `<div class="error-message col-span-full"><i class="fas fa-exclamation-triangle text-3xl"></i><p>No channels available. Please refresh.</p><button class="refresh-btn" id="manualRefreshBtn"><i class="fas fa-sync-alt"></i> Reload Data</button></div>`;
+                    const refreshBtn = document.getElementById('manualRefreshBtn');
+                    if (refreshBtn) refreshBtn.addEventListener('click', () => location.reload());
+                    return;
+                }
+                
+                const fragment = document.createDocumentFragment();
+                this.channelsData.forEach(channel => {
+                    const card = this.createCard(channel);
+                    fragment.appendChild(card);
+                });
+                this.container.appendChild(fragment);
+            }
+            
+            createCard(channel) {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                const logoUrl = channel.logo || channel.image || '';
+                const channelName = channel.name || 'Channel';
+                const streamUrl = channel.url || '#';
+                if (!streamUrl || streamUrl === '#') {
+                    card.style.opacity = '0.6';
+                    card.style.cursor = 'not-allowed';
+                } else {
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.openPopup(channelName, streamUrl);
+                    });
+                }
+                card.innerHTML = `
+                    <div class="channel-image-container">
+                        <div class="channel-image" style="${logoUrl ? `background-image: url('${this.escapeHtml(logoUrl)}')` : 'background-color:#1e2a5e;'}">
+                            ${!logoUrl ? `<div class="h-full flex items-center justify-center text-gray-300"><i class="fas fa-tv text-3xl"></i></div>` : ''}
+                        </div>
+                    </div>
+                    <div class="channel-title">
+                        ${this.escapeHtml(channelName)}
+                    </div>
+                `;
+                return card;
+            }
+            
+            openPopup(channelName, streamUrl) {
+                if (!streamUrl || streamUrl === '#') {
+                    alert("Stream URL not available");
+                    return;
+                }
+                // Set iframe source
+                this.streamIframe.src = streamUrl;
+                this.popupChannelNameSpan.innerText = this.escapeHtml(channelName);
+                this.popupOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                // Optional: add loading indicator inside iframe might be automatic
+            }
+            
+            closePopup() {
+                this.popupOverlay.classList.remove('active');
+                // Clear iframe src to stop streaming
+                this.streamIframe.src = '';
+                this.popupChannelNameSpan.innerText = '';
+                document.body.style.overflow = '';
+            }
+            
+            escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
+                });
+            }
+            
+            setupRefreshEvents() {
+                // Home refresh (reload channels, keep external fetch)
+                const refreshHomeBtns = document.querySelectorAll('.refresh-home, .mobile-nav-refresh, #homeLink');
+                refreshHomeBtns.forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        this.container.innerHTML = '<div class="col-span-full text-center py-10"><i class="fas fa-spinner fa-spin text-3xl"></i><p>Refreshing channels...</p></div>';
+                        await this.fetchExternalChannels();
+                        this.renderChannels();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                });
+            }
+        }
+        
+        // Mobile menu global toggle
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.toggle('active');
+        };
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new CineArenaPlayer();
+            const openMenuBtn = document.getElementById('openMenu');
+            if (openMenuBtn) {
+                openMenuBtn.addEventListener('click', () => window.toggleMobileMenu());
+            }
+            // Overlay click for mobile menu uses global
+            const overlayDiv = document.getElementById('overlay');
+            if (overlayDiv) overlayDiv.onclick = () => window.toggleMobileMenu();
+        });
+    </script>
+</body>
+</html>
