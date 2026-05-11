@@ -17,31 +17,56 @@
     {
         "name": "Bein-1",
         "url": "https://cinexstar.vercel.app/bein1",
-        "logo": "https://widespread-plum-gffbkraoo7-deis8y3f44.edgeone.dev/FanCode_logo.svg.png"
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Logo_bein_sports_1.png"
     },
     {
-        "name": "FOOTBALL Channels",
-        "url": "https://cinearena-allinone.vercel.app/football",
-        "logo": "https://play-lh.googleusercontent.com/P1wKLm09VA5cLjFyBfMCTQvMxGK06VX014Csbeso5TBNh3mMlyWLgWFR5wLOHCdJAek"
+        "name": "Bein-2",
+        "url": ""https://cinexstar.vercel.app/bein2",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Logo_bein_sports_2.png"
     },
     {
-        "name": "SONY Ten",
-        "url": "https://cinearena-site.vercel.app/sonyten",
-        "logo": "https://upload.wikimedia.org/wikipedia/en/c/cd/Sony_Sports_Network.svg"
+        "name": "Bein-3",
+        "url": ""https://cinexstar.vercel.app/bein3",
+        "logo": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Logo_bein_sports_3.png"
     },
     {
-        "name": "TNT Sports",
-        "url": "https://cinearena-site.vercel.app/tnt",
-        "logo": "https://yt3.googleusercontent.com/LsMejcvY6MC4kH5HASIlE5UEEmdszstpFHV8-8x9Hv1dzypYD2gvYKnyDxvUSA5xRnHwGtMRwg=s900-c-k-c0x00ffffff-no-rj"
+        "name": "Premier Sports-1",
+        "url": ""https://cinexstar.vercel.app/ps1",
+        "logo": "https://storyblok.cdn.vmo2digital.co.uk/f/253875/608x360/41917809a6/premier_sports_logo_57035db16b.png/m/3840x0/filters:format(auto)quality(75)"
     },
     {
-        "name": "MOVIES Channels",
-        "url": "https://cine-movies.pages.dev/",
-        "logo": "https://thumbs.dreamstime.com/b/old-fashioned-movie-film-camera-logo-design-template-black-white-vector-illustration-video-production-logo-design-template-old-136115408.jpg"
+        "name": "Premier Sports-2",
+        "url": ""https://cinexstar.vercel.app/ps2",
+        "logo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1VsrwkysfLqm1DwjJ2dfH2cs47TTQRFmuA&s"
     },
     {
-        "name": "MUSIC Channels",
-        "url": "https://cinemusic.pages.dev",
-        "logo": "https://img.freepik.com/premium-vector/colorful-musical-note-art-with-vibrant-splashes-musical-note-black-surrounded_53876-651215.jpg"
+        "name": "CBS Sports",
+        "url": ""https://cinexstar.vercel.app/cbs",
+        "logo": "https://yt3.googleusercontent.com/jnGO8vkeg1R9IAaIHIej_SS9tzYXtyk54KwbHovEq2No3HfvV6mw2CYVIoFg2ThbFTnkUiSIBw=s900-c-k-c0x00ffffff-no-rj"
+    },
+    {
+        "name": "Vivo Sport TV",
+        "url": ""https://cinexstar.vercel.app/vivotv",
+        "logo": "https://play-lh.googleusercontent.com/8suHCRolKN9pJR6j0rI63vQ5ShpZ5mD3G3-j9wWwjRraxfsXUnaLn_EW7qqIFxC3h9Nk=w120"
+    },
+    {
+        "name": "TNT Sport-1",
+        "url": ""https://cinexstar.vercel.app/tnt1",
+        "logo": "https://media.info/l/o/1/1539.1690027797.png"
+    },
+    {
+        "name": "TNT Sport-2",
+        "url": ""https://cinexstar.vercel.app/tnt2",
+        "logo": "https://media.info/l/o/1/1540.1690027877.png"
+    },
+    {
+        "name": "TNT Sport-3",
+        "url": ""https://cinexstar.vercel.app/tnt3",
+        "logo": "https://media.info/l/o/5/5712.1690027954.png"
+    },
+    {
+        "name": "TNT Sport-4",
+        "url": ""https://cinexstar.vercel.app/tnt4",
+        "logo": "https://media.info/l/o/1/1491.1690027975.png"
     }
 ]
